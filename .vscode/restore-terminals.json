@@ -1,0 +1,25 @@
+{
+  "artificialDelayMilliseconds": 300,
+  "keepExistingTerminalsOpen": false,
+  "runOnStartup": true,
+  "terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "backend",
+          "commands": ["cd ./backend", "npm run development"],
+          "shouldRunCommands": true
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "frontend",
+          "commands": ["cd ./frontend", "npm run development"],
+          "shouldRunCommands": true
+        }
+      ]
+    }
+  ]
+}
