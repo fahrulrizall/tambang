@@ -1,12 +1,19 @@
-const UsersModel = require("../models/users.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { User } = require("../db/models");
+const sequelizeConnection = require("../config/database-connection.js");
+const { decodeToken } = require("../utils/index.js");
 
 const login = async (req, res) => {
   try {
-    const [data] = await UsersModel.userNameExist(req.body.username);
+    const data = await User.findOne({
+      where: {
+        username: req.body.username,
+      },
+      raw: true,
+    });
 
-    if (data.length === 0) {
+    if (!data) {
       return res.status(400).json({
         message: `wrong email or password`,
       });
@@ -14,7 +21,7 @@ const login = async (req, res) => {
 
     const isMatchPassword = await bcrypt.compare(
       req.body.password,
-      data[0].password
+      data.password
     );
 
     if (!isMatchPassword) {
@@ -23,11 +30,11 @@ const login = async (req, res) => {
       });
     }
 
-    const uuid = data[0].uuid;
-    const username = data[0].username;
-    const role = data[0].role;
-    const plant = data[0].plantCode;
-    const plantUuid = data[0].plantUuid;
+    const uuid = data.uuid;
+    const username = data.username;
+    const role = data.role;
+    const plant = data.plantCode;
+    const plantUuid = data.plantUuid;
 
     const accessToken = jwt.sign(
       { uuid, username, role, plant, plantUuid },
@@ -42,7 +49,29 @@ const login = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET
     );
 
-    await UsersModel.updateRefreshToken(refreshToken, uuid);
+    const transaction = await sequelizeConnection.transaction();
+
+    try {
+      await User.update(
+        {
+          ...data,
+          refreshToken: refreshToken,
+          lastModifiedBy: decodeToken(req, "uuid"),
+          lastModifiedDateTime: moment(new Date().toUTCString()).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
+        },
+        {
+          where: {
+            uuid: uuid,
+          },
+          transaction,
+        }
+      );
+      await transaction.commit();
+    } catch (error) {
+      console.log(error);
+    }
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -71,11 +100,46 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) return res.sendStatus(204);
-  const [data] = await UsersModel.readRefreshToken(refreshToken);
 
-  if (!data[0]) return res.sendStatus(204);
-  const uuid = data[0].uuid;
-  await UsersModel.updateRefreshToken(null, uuid);
+  const transaction = await sequelizeConnection.transaction();
+
+  const data = await User.findOne(
+    {
+      where: {
+        refreshToken: refreshToken,
+      },
+      raw: true,
+    },
+    {
+      transaction,
+    }
+  );
+
+  if (!data) return res.sendStatus(204);
+  const uuid = data.uuid;
+
+  try {
+    await User.update(
+      {
+        ...data,
+        refreshToken: null,
+        lastModifiedBy: decodeToken(req, "uuid"),
+        lastModifiedDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      {
+        where: {
+          uuid,
+        },
+        transaction,
+      }
+    );
+    await transaction.commit();
+  } catch (error) {
+    console.log(error);
+  }
+
   res.clearCookie("refreshToken");
   return res.sendStatus(200);
 };
@@ -84,9 +148,22 @@ const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) return res.sendStatus(401);
-    const [data] = await UsersModel.readRefreshToken(refreshToken);
 
-    if (!data[0]) return res.sendStatus(403);
+    const transaction = await sequelizeConnection.transaction();
+
+    const data = await User.findOne(
+      {
+        where: {
+          refreshToken: refreshToken,
+        },
+        raw: true,
+      },
+      {
+        transaction,
+      }
+    );
+
+    if (!data) return res.sendStatus(403);
 
     jwt.verify(
       refreshToken,

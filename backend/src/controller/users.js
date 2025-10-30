@@ -1,10 +1,19 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
-const UsersModel = require("../models/users.js");
+const { User } = require("../db/models");
+const sequelizeConnection = require("../config/database-connection.js");
 
 const pagedSearchUsers = async (req, res) => {
   const errros = validationResult(req);
-  const { pageIndex, pageSize } = req.query;
+  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder } =
+    req.query;
+
+  let order = [];
+  if (orderByFieldName) {
+    const direction =
+      sortOrder && sortOrder.toUpperCase() === "DESC" ? "DESC" : "ASC";
+    order = [[orderByFieldName, direction]];
+  }
 
   if (!errros.isEmpty()) {
     return res.status(400).json({
@@ -12,14 +21,27 @@ const pagedSearchUsers = async (req, res) => {
     });
   }
 
-  try {
-    const [data] = await UsersModel.pagedSearchUsers(pageIndex, pageSize);
+  const Op = sequelize.Op;
 
-    const [totalCountUsers] = await UsersModel.totalCountUsers();
+  try {
+    const whereCondition = {
+      ...(keyword && {
+        [Op.or]: [{ name: { [Op.like]: `%${keyword}%` } }],
+      }),
+    };
+
+    const result = await User.findAndCountAll({
+      where: whereCondition,
+      limit: parseInt(pageSize),
+      offset: parseInt(pageSize * pageIndex),
+      order: order,
+    });
 
     res.json({
-      totalCount: totalCountUsers[0].totalCount,
-      data: data,
+      data: result.rows,
+      totalCount: result.count,
+      pageIndex: parseInt(pageIndex),
+      pageSize: parseInt(pageSize),
     });
   } catch (error) {
     res.status(500).json({
@@ -38,17 +60,27 @@ const createNewUser = async (req, res) => {
     });
   }
 
-  const [email] = await UsersModel.emailUserExist(request.email);
+  const email = await User.findOne({
+    where: {
+      email: request.email,
+    },
+    raw: true,
+  });
 
-  if (email.length > 0) {
+  if (email) {
     return res.status(400).json({
       messages: "Email already exist",
     });
   }
 
-  const [username] = await UsersModel.userNameExist(request.username);
+  const username = await User.findOne({
+    where: {
+      username: request.username,
+    },
+    raw: true,
+  });
 
-  if (username.length > 0) {
+  if (username) {
     return res.status(400).json({
       messages: "Username already exist",
     });
@@ -65,8 +97,20 @@ const createNewUser = async (req, res) => {
     plantUuid: request.plantUuid,
   };
 
+  const transaction = await sequelizeConnection.transaction();
+
   try {
-    await UsersModel.createNewUser(data);
+    await User.create(
+      {
+        ...data,
+        createdBy: decodeToken(req, "uuid"),
+        createdDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      { transaction }
+    );
+
     res.status(201).json({
       messages: request,
     });
@@ -98,20 +142,41 @@ const updateUser = async (req, res) => {
     });
   }
 
-  const [data] = await UsersModel.readUser(uuid);
+  const data = await User.findOne({
+    where: {
+      uuid: uuid,
+    },
+    raw: true,
+  });
 
-  if (data.length === 0) {
+  if (!data) {
     return res.status(400).json({
       messages: "uuid not exist",
     });
   }
 
+  const transaction = await sequelizeConnection.transaction();
+
   try {
-    await UsersModel.updateUser(request, uuid);
+    await User.update(
+      {
+        ...request,
+        lastModifiedBy: decodeToken(req, "uuid"),
+        lastModifiedDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      {
+        where: {
+          uuid,
+        },
+        transaction,
+      }
+    );
+
     res.json({
       data: {
         id: uuid,
-        ...request,
       },
     });
   } catch (error) {
@@ -124,16 +189,26 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { uuid } = req.params;
 
-  const [data] = await UsersModel.readUser(uuid);
+  const data = await User.findOne({
+    where: {
+      uuid: uuid,
+    },
+    raw: true,
+  });
 
-  if (data.length === 0) {
+  if (!data) {
     return res.status(400).json({
       messages: "uuid not exist",
     });
   }
 
+  const transaction = await sequelizeConnection.transaction();
+
   try {
-    await UsersModel.deleteUser(uuid);
+    await User.destroy({
+      where: { uuid: uuid },
+      transaction,
+    });
     res.json({
       id: uuid,
     });
@@ -148,10 +223,15 @@ const readUser = async (req, res) => {
   const { uuid } = req.params;
 
   try {
-    const [data] = await UsersModel.readUser(uuid);
+    const result = await User.findOne({
+      where: {
+        uuid: uuid,
+      },
+      raw: true,
+    });
 
     res.json({
-      data: data[0],
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
