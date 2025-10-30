@@ -3,6 +3,7 @@ import {
   UpdateTranshipment,
   ReadTranshipment,
   PagedSearchBarging,
+  ReadBarging,
   CreateTranshipment,
   DeleteTranshipment,
 } from "../../API";
@@ -48,6 +49,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     onSubmit: (values) => {
       const model = {
         ...values,
+        bargingUuid: values.vessel?.value,
         company: values.company?.value,
         detail: values.detail.map((item) => ({
           ...item,
@@ -145,13 +147,13 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             ...response.data,
             date: moment(response.data.date).format("yyyy-MM-DD"),
             vessel: {
-              value: response.data.barginUuid,
+              value: response.data.bargingUuid,
               label: response.data.no,
             },
             company: {
               value: response.data.company,
               label: options.find((a) => a.value == response.data.company)
-                .label,
+                ?.label,
             },
             detail: response.data.detail.map((item) => ({
               ...item,
@@ -359,9 +361,28 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             label="No Shipment"
             type="select-api"
             name="vessel"
-            onChange={(e) => {
+            onChange={async (e) => {
               formik.setFieldValue("vessel", e.target.value);
               formik.setFieldValue("mv", e.target.value?.mv);
+              const bargingDetail = await ReadBarging(e.target.value.value);
+              const detail = bargingDetail.data.detail.map((item) => ({
+                ...item,
+                tugBoat: item.name,
+                arrivedatJetty:
+                  item.arrivedatJetty &&
+                  moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
+                commanced:
+                  item.commanced &&
+                  moment(item.commanced).format("yyyy-MM-DD HH:mm"),
+                completed:
+                  item.completed &&
+                  moment(item.completed).format("yyyy-MM-DD HH:mm"),
+                castedOff:
+                  item.castedOff &&
+                  moment(item.castedOff).format("yyyy-MM-DD HH:mm"),
+              }));
+
+              formik.setFieldValue("detail", detail);
             }}
             value={formik.values.vessel}
             errorMessage={formik.errors?.vessel}
@@ -385,7 +406,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
           />
           <Input
             label="Stowage Plan"
-            type="text"
+            type="number"
             name="stowagePlan"
             onChange={formik.handleChange}
             value={formik.values.stowagePlan}

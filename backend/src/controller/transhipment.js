@@ -74,6 +74,8 @@ const createNewTranshipment = async (req, res) => {
     });
   }
 
+  const transaction = await sequelizeConnection.transaction();
+
   try {
     await Transhipment.create({
       ...request,
@@ -82,6 +84,28 @@ const createNewTranshipment = async (req, res) => {
         "YYYY-MM-DD HH:mm:ss"
       ),
     });
+
+    await BargingDetail.destroy({
+      where: { bargingUuid: request.bargingUuid },
+      transaction,
+    });
+
+    const details = request.detail.map((item) => ({
+      ...item,
+      uuid: uuidv4(),
+      bargingUuid: request.bargingUuid,
+      createdBy: decodeToken(req, "uuid"),
+      createdDateTime: moment(new Date().toUTCString()).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+    }));
+
+    if (details.length > 0) {
+      await BargingDetail.bulkCreate(details, { transaction });
+    }
+
+    await transaction.commit();
+
     res.status(201).json({
       id: request.code,
     });
@@ -104,6 +128,7 @@ const updateTranshipment = async (req, res) => {
   const transaction = await sequelizeConnection.transaction();
 
   try {
+    console.log(request);
     await Transhipment.update(
       {
         ...request,
