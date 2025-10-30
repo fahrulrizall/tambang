@@ -47,6 +47,6 @@ jobs:
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME_PUBLIC }}
-          password: ${{ secrets.FTP_PASSWORD_PRODUCTION }}
+          password: ${{ secrets.FTP_PASSWORD_FRONTEND }}
           local-dir: frontend/build/
           remote-dir: /public_html/frontend/build/
