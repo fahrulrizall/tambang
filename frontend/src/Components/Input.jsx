@@ -212,7 +212,7 @@ const SelectAPI = ({
   );
 };
 
-const CheckboxInput = ({
+const RadioInput = ({
   label,
   options,
   value,
@@ -261,12 +261,58 @@ const CheckboxInput = ({
   );
 };
 
+const CheckboxInput = ({
+  label,
+  options,
+  value,
+  onChange,
+  name,
+  isError,
+  errorMessage,
+  useLabel = true,
+  containerClassName,
+}) => {
+  return (
+    <div className={containerClassName ? containerClassName : "row mb-3"}>
+      {useLabel && <label className="col-sm-3 col-form-label">{label}</label>}
+      <div className={useLabel ? "col-sm-9" : "col-sm-12"}>
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            name={name}
+            id={`chekbox`}
+            value={value}
+            checked={value === true}
+            onClick={onChange}
+          />
+          <label className="form-check-label" htmlFor={`chekbox`}>
+            {label}
+          </label>
+        </div>
+
+        {isError && (
+          <p
+            className="text-danger"
+            style={{ fontSize: "11px", position: "absolute" }}
+          >
+            {errorMessage}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function Input(props) {
   if (props.type === "select") {
     return SelectInput(props);
   }
   if (props.type === "select-api") {
     return SelectAPI(props);
+  }
+  if (props.type === "radio") {
+    return RadioInput(props);
   }
   if (props.type === "checkbox") {
     return CheckboxInput(props);

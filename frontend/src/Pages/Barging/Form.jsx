@@ -416,7 +416,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   return (
     <>
       <Modal show={isOpen} onHide={onCloseModal} fullscreen>
-        <ModalHeader closeButton={true}>Add New Barging</ModalHeader>
+        <ModalHeader closeButton={true}>Barging</ModalHeader>
         <ModalBody>
           <Input
             label="Date"

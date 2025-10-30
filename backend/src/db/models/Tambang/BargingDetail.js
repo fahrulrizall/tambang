@@ -44,6 +44,12 @@ BargingDetail.init(
     remarks: {
       type: DataTypes.STRING(),
     },
+    alongside: {
+      type: DataTypes.DATE(),
+    },
+    cargoOnb: {
+      type: DataTypes.FLOAT(),
+    },
     ...AuditableField,
   },
   {

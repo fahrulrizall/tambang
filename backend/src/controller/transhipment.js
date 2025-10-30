@@ -1,5 +1,9 @@
 const { validationResult } = require("express-validator");
-const { Transhipment, VwTranshipment } = require("../db/models");
+const {
+  Transhipment,
+  VwTranshipment,
+  VwBargingDetail,
+} = require("../db/models");
 const sequelize = require("sequelize");
 const { ApiError } = require("../Helper/Error.js");
 const { v4: uuidv4 } = require("uuid");
@@ -144,10 +148,20 @@ const readTranshipment = async (req, res) => {
       where: {
         uuid: uuid,
       },
+      raw: true,
+    });
+
+    const detail = await VwBargingDetail.findAll({
+      where: {
+        bargingUuid: result.bargingUuid,
+      },
+      raw: true,
     });
 
     res.json({
-      ...result.dataValues,
+      ...result,
+      blending: result.blending ? true : false,
+      detail: detail,
     });
   } catch (error) {
     ApiError(res, error);

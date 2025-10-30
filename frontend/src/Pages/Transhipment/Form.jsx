@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  ReadBarging,
   CreateBarging,
   UpdateBarging,
   DeleteBarging,
   PagedSearchTugBoat,
+  ReadTranshipment,
+  PagedSearchBarging,
 } from "../../API";
 import { ModalPopUp, Input, DataTable } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
@@ -139,11 +140,15 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   useEffect(() => {
     if (uuid && isOpen) {
       setAction(Action.VIEW);
-      ReadBarging(uuid)
+      ReadTranshipment(uuid)
         .then((response) =>
           formik.setValues({
             ...response.data,
             date: moment(response.data.date).format("yyyy-MM-DD"),
+            vessel: {
+              value: response.data.barginUuid,
+              label: response.data.no,
+            },
             company: {
               value: response.data.company,
               label: options.find((a) => a.value == response.data.company)
@@ -234,13 +239,10 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       },
     },
     {
-      name: "Cargo",
-      style: {
-        minWidth: 200,
-      },
+      name: "Arrived at Jetty",
     },
     {
-      name: "Arrived at Jetty",
+      name: "Alongside",
     },
     {
       name: "Commanced",
@@ -252,16 +254,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       name: "Casted Off",
     },
     {
-      name: "Remarks",
-      style: {
-        minWidth: 200,
-      },
-    },
-    {
-      name: "Action",
-      style: {
-        width: 10,
-      },
+      name: "Cargo ONB",
     },
   ];
 
@@ -310,20 +303,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       name: "barge",
     },
     {
-      name: "cargo",
-      view: (data) => (
-        <FormControl
-          type="number"
-          value={data.cargo}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].cargo = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-    {
       name: "arrivedatJetty",
       view: (data) => (
         <FormControl
@@ -332,6 +311,20 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
           onChange={(e) => {
             const prev = [...formik.values.detail];
             prev[data.index].arrivedatJetty = e.target.value;
+            formik.setFieldValue("detail", prev);
+          }}
+        />
+      ),
+    },
+    {
+      name: "alongside",
+      view: (data) => (
+        <FormControl
+          type="datetime-local"
+          value={data.alongside}
+          onChange={(e) => {
+            const prev = [...formik.values.detail];
+            prev[data.index].alongside = e.target.value;
             formik.setFieldValue("detail", prev);
           }}
         />
@@ -380,35 +373,17 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       ),
     },
     {
-      name: "remarks",
+      name: "cargoOnb",
       view: (data) => (
         <FormControl
-          type="text"
-          value={data.remarks}
+          type="number"
+          value={data.cargoOnb}
           onChange={(e) => {
             const prev = [...formik.values.detail];
-            prev[data.index].remarks = e.target.value;
+            prev[data.index].cargoOnb = e.target.value;
             formik.setFieldValue("detail", prev);
           }}
         />
-      ),
-    },
-    {
-      view: (data) => (
-        <button
-          className="btn btn-sm btn-danger"
-          onClick={() => {
-            formik.setFieldValue(
-              "detail",
-              formik.values.detail.filter((_, index) => index !== data.index)
-            );
-          }}
-          style={{
-            fontSize: "10px",
-          }}
-        >
-          <i className="bi bi-trash"></i>
-        </button>
       ),
     },
   ];
@@ -416,27 +391,26 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   return (
     <>
       <Modal show={isOpen} onHide={onCloseModal} fullscreen>
-        <ModalHeader closeButton={true}>Add New Barging</ModalHeader>
+        <ModalHeader closeButton={true}>Transhipment</ModalHeader>
         <ModalBody>
           <Input
-            label="Date"
-            type="date"
-            name="date"
-            onChange={formik.handleChange}
-            value={formik.values.date}
-            errorMessage={formik.errors?.date}
-            isError={formik.errors.date && formik.touched.date}
-          />
-          <Input
             label="No Shipment"
-            type="number"
-            name="no"
-            onChange={formik.handleChange}
-            value={formik.values.no}
-            errorMessage={formik.errors?.no}
-            isError={formik.errors.no && formik.touched.no}
+            type="select-api"
+            name="vessel"
+            onChange={(e) => {
+              formik.setFieldValue("vessel", e.target.value);
+              formik.setFieldValue("mv", e.target.value?.mv);
+            }}
+            value={formik.values.vessel}
+            errorMessage={formik.errors?.vessel}
+            isError={formik.errors.vessel && formik.touched.vessel}
+            api={PagedSearchBarging}
+            handleSetOptions={(item) => ({
+              value: item.uuid,
+              label: `${item.no} - ${item.mv}`,
+              mv: item.mv,
+            })}
           />
-
           <Input
             label="Supply to MV"
             type="text"
@@ -445,40 +419,88 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             value={formik.values.mv}
             errorMessage={formik.errors?.mv}
             isError={formik.errors.mv && formik.touched.mv}
+            disabled={true}
           />
-
           <Input
-            label="Company"
-            type="select"
-            name="company"
+            label="Stowage Plan"
+            type="text"
+            name="stowagePlan"
             onChange={formik.handleChange}
-            value={formik.values.company}
-            errorMessage={formik.errors?.company}
-            isError={formik.errors.company && formik.touched.company}
-            options={options}
+            value={formik.values.stowagePlan}
+            errorMessage={formik.errors?.stowagePlan}
+            isError={formik.errors.stowagePlan && formik.touched.stowagePlan}
           />
-
+          <Input
+            label="Loading Port"
+            type="text"
+            name="loadingPort"
+            onChange={formik.handleChange}
+            value={formik.values.loadingPort}
+            errorMessage={formik.errors?.loadingPort}
+            isError={formik.errors.loadingPort && formik.touched.loadingPort}
+          />
+          <Input
+            label="Discharging Port"
+            type="text"
+            name="dischargingPort"
+            onChange={formik.handleChange}
+            value={formik.values.dischargingPort}
+            errorMessage={formik.errors?.dischargingPort}
+            isError={
+              formik.errors.dischargingPort && formik.touched.dischargingPort
+            }
+          />
+          <Input
+            label="Consignee"
+            type="text"
+            name="consigne"
+            onChange={formik.handleChange}
+            value={formik.values.consigne}
+            errorMessage={formik.errors?.consigne}
+            isError={formik.errors.consigne && formik.touched.consigne}
+          />
+          <Input
+            label="Buyer"
+            type="text"
+            name="client"
+            onChange={formik.handleChange}
+            value={formik.values.client}
+            errorMessage={formik.errors?.client}
+            isError={formik.errors.client && formik.touched.client}
+          />
+          <Input
+            label="Surveyor"
+            type="text"
+            name="surveyor"
+            onChange={formik.handleChange}
+            value={formik.values.surveyor}
+            errorMessage={formik.errors?.surveyor}
+            isError={formik.errors.surveyor && formik.touched.surveyor}
+          />
+          <Input
+            label="Notify"
+            type="text"
+            name="notify"
+            onChange={formik.handleChange}
+            value={formik.values.notify}
+            errorMessage={formik.errors?.notify}
+            isError={formik.errors.notify && formik.touched.notify}
+          />
+          <Input
+            label="Blending"
+            type="checkbox"
+            name="blending"
+            onChange={formik.handleChange}
+            value={formik.values.blending}
+            errorMessage={formik.errors?.blending}
+            isError={formik.errors.blending && formik.touched.blending}
+          />
           <DataTable
             data={formik.values.detail}
             tableHeader={tableHeaders}
             tableBody={tableBody}
             usePagination={false}
           />
-
-          <button
-            className="btn btn-primary w-100"
-            onClick={() => {
-              formik.setFieldValue("detail", [
-                ...formik.values.detail,
-                {
-                  no: "",
-                  tugBoat: "",
-                },
-              ]);
-            }}
-          >
-            +
-          </button>
         </ModalBody>
         <ModalFooter>
           <button
