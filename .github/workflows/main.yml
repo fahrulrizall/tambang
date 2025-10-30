@@ -22,7 +22,7 @@ jobs:
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME_PRODUCTION }}
-          password: ${{ secrets.FTP_PASSWORD_PRODUCTION }}
+          password: ${{ secrets.FTP_PASSWORD }}
 
   another-job:
     name: Another Job
@@ -40,13 +40,13 @@ jobs:
         run: |
           cd frontend
           npm install
-          npm run build:productionvps
+          npm run build:production
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME_PUBLIC }}
-          password: ${{ secrets.FTP_PASSWORD_FRONTEND }}
+          password: ${{ secrets.FTP_PASSWORD }}
           local-dir: frontend/build/
           remote-dir: /public_html/frontend/build/

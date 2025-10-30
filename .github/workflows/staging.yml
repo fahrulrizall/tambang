@@ -23,15 +23,9 @@ jobs:
           npm install
           npm run build:staging
 
-      - name: 🔨 Build Project traceability
-        run: |
-          cd frontend-new
-          npm install
-          npm run build:staging
-
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME_STAGING }}
-          password: ${{ secrets.FTP_PASSWORD_STAGING }}
+          password: ${{ secrets.FTP_PASSWORD }}
