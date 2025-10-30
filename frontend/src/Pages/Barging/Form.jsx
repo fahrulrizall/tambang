@@ -51,7 +51,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
         company: values.company?.value,
         detail: values.detail.map((item) => ({
           ...item,
-          barginUuid: values.uuid,
+          bargingUuid: values.uuid,
           tugBoatUuid: item.tugBoat?.value,
         })),
       };

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-  CreateBarging,
-  UpdateBarging,
-  DeleteBarging,
-  PagedSearchTugBoat,
+  UpdateTranshipment,
   ReadTranshipment,
   PagedSearchBarging,
+  CreateTranshipment,
+  DeleteTranshipment,
 } from "../../API";
 import { ModalPopUp, Input, DataTable } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
@@ -52,12 +51,12 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
         company: values.company?.value,
         detail: values.detail.map((item) => ({
           ...item,
-          barginUuid: values.uuid,
-          tugBoatUuid: item.tugBoat?.value,
+          bargingUuid: values.uuid,
+          tugBoatUuid: item.tugBoatUuid,
         })),
       };
       if (action === Action.CREATE) {
-        CreateBarging(model)
+        CreateTranshipment(model)
           .then((response) => {
             setToastInfo({
               message: "Barging successfully created",
@@ -78,7 +77,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             setIsShowToast(true);
           });
       } else {
-        UpdateBarging(uuid, model)
+        UpdateTranshipment(uuid, model)
           .then((response) => {
             setToastInfo({
               message: "Barging successfully update",
@@ -103,7 +102,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   });
 
   const deleteData = () => {
-    DeleteBarging(uuid)
+    DeleteTranshipment(uuid)
       .then(() => {
         setToastInfo({
           message: "Barging successfully deleted",
@@ -156,10 +155,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             },
             detail: response.data.detail.map((item) => ({
               ...item,
-              tugBoat: {
-                value: item.tugBoatUuid,
-                label: item.name,
-              },
+              tugBoat: item.name,
               arrivedatJetty:
                 item.arrivedatJetty &&
                 moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
@@ -223,19 +219,19 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     {
       name: "No",
       style: {
-        minWidth: 100,
+        minWidth: 50,
       },
     },
     {
       name: "TugBoat",
       style: {
-        minWidth: 200,
+        minWidth: 160,
       },
     },
     {
       name: "Barge",
       style: {
-        minWidth: 200,
+        minWidth: 160,
       },
     },
     {
@@ -261,43 +257,9 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   const tableBody = [
     {
       name: "no",
-      view: (data) => (
-        <FormControl
-          type="number"
-          value={data.no}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].no = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-          style={{
-            width: 100,
-          }}
-        />
-      ),
     },
     {
       name: "tugBoat",
-      view: (data) => (
-        <Input
-          type="select-api"
-          name="tugBoat"
-          useLabel={false}
-          value={data.tugBoat}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].tugBoat = e.target.value;
-            prev[data.index].barge = e.target.value.barge;
-            formik.setFieldValue("detail", prev);
-          }}
-          api={PagedSearchTugBoat}
-          handleSetOptions={(pt) => ({
-            value: pt.uuid,
-            label: pt.name,
-            barge: pt.barge,
-          })}
-        />
-      ),
     },
     {
       name: "barge",

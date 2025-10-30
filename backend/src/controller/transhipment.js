@@ -3,12 +3,14 @@ const {
   Transhipment,
   VwTranshipment,
   VwBargingDetail,
+  BargingDetail,
 } = require("../db/models");
 const sequelize = require("sequelize");
 const { ApiError } = require("../Helper/Error.js");
 const { v4: uuidv4 } = require("uuid");
 const { decodeToken } = require("../utils/index.js");
 const moment = require("moment");
+const sequelizeConnection = require("../config/database-connection.js");
 
 const pagedSearchTranshipment = async (req, res) => {
   const errros = validationResult(req);
@@ -99,6 +101,8 @@ const updateTranshipment = async (req, res) => {
     });
   }
 
+  const transaction = await sequelizeConnection.transaction();
+
   try {
     await Transhipment.update(
       {
@@ -112,8 +116,30 @@ const updateTranshipment = async (req, res) => {
         where: {
           uuid,
         },
+        transaction,
       }
     );
+
+    await BargingDetail.destroy({
+      where: { bargingUuid: request.bargingUuid },
+      transaction,
+    });
+
+    const details = request.detail.map((item) => ({
+      ...item,
+      uuid: uuidv4(),
+      bargingUuid: request.bargingUuid,
+      createdBy: decodeToken(req, "uuid"),
+      createdDateTime: moment(new Date().toUTCString()).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ),
+    }));
+
+    if (details.length > 0) {
+      await BargingDetail.bulkCreate(details, { transaction });
+    }
+
+    await transaction.commit();
 
     res.json({
       id: uuid,
