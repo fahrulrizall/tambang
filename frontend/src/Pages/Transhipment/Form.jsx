@@ -149,11 +149,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               value: response.data.bargingUuid,
               label: response.data.no,
             },
-            company: {
-              value: response.data.company,
-              label: options.find((a) => a.value == response.data.company)
-                ?.label,
-            },
             detail: response.data.detail.map((item) => ({
               ...item,
               tugBoat: item.name,
