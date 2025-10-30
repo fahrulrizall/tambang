@@ -33,11 +33,9 @@ const login = async (req, res) => {
     const uuid = data.uuid;
     const username = data.username;
     const role = data.role;
-    const plant = data.plantCode;
-    const plantUuid = data.plantUuid;
 
     const accessToken = jwt.sign(
-      { uuid, username, role, plant, plantUuid },
+      { uuid, username, role },
       process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: "1d",

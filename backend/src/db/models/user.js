@@ -27,9 +27,6 @@ User.init(
     refreshToken: {
       type: DataTypes.DATE(),
     },
-    plantUuid: {
-      type: DataTypes.DATE(),
-    },
     role: {
       type: DataTypes.DATE(),
     },
