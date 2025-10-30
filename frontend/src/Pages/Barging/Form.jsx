@@ -415,7 +415,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
   return (
     <>
-      <Modal show={isOpen} onHide={onCloseModal} fullscreen>
+      <Modal show={isOpen} onHide={onCloseModal} size="xl">
         <ModalHeader closeButton={true}>Barging</ModalHeader>
         <ModalBody>
           <Input
@@ -457,13 +457,18 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             isError={formik.errors.company && formik.touched.company}
             options={options}
           />
-
-          <DataTable
-            data={formik.values.detail}
-            tableHeader={tableHeaders}
-            tableBody={tableBody}
-            usePagination={false}
-          />
+          <div
+            style={{
+              overflowX: "scroll",
+            }}
+          >
+            <DataTable
+              data={formik.values.detail}
+              tableHeader={tableHeaders}
+              tableBody={tableBody}
+              usePagination={false}
+            />
+          </div>
 
           <button
             className="btn btn-primary w-100"

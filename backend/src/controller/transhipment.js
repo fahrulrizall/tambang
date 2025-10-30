@@ -14,7 +14,7 @@ const sequelizeConnection = require("../config/database-connection.js");
 
 const pagedSearchTranshipment = async (req, res) => {
   const errros = validationResult(req);
-  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder } =
+  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder, company } =
     req.query;
 
   let order = [];
@@ -33,17 +33,12 @@ const pagedSearchTranshipment = async (req, res) => {
   const Op = sequelize.Op;
 
   try {
-    const whereCondition = keyword
-      ? {
-          [Op.or]: [
-            {
-              mv: {
-                [Op.like]: `%${keyword}%`,
-              },
-            },
-          ],
-        }
-      : {};
+    const whereCondition = {
+      ...(keyword && {
+        [Op.or]: [{ mv: { [Op.like]: `%${keyword}%` } }],
+      }),
+      ...(company && { company: company }),
+    };
 
     const result = await VwTranshipment.findAndCountAll({
       where: whereCondition,

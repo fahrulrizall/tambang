@@ -50,7 +50,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       const model = {
         ...values,
         bargingUuid: values.vessel?.value,
-        company: values.company?.value,
         detail: values.detail.map((item) => ({
           ...item,
           bargingUuid: values.uuid,
@@ -161,6 +160,9 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               arrivedatJetty:
                 item.arrivedatJetty &&
                 moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
+              alongside:
+                item.alongside &&
+                moment(item.alongside).format("yyyy-MM-DD HH:mm"),
               commanced:
                 item.commanced &&
                 moment(item.commanced).format("yyyy-MM-DD HH:mm"),
@@ -253,6 +255,9 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     },
     {
       name: "Cargo ONB",
+      style: {
+        minWidth: 150,
+      },
     },
   ];
 
@@ -352,9 +357,11 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     },
   ];
 
+  console.log(formik.values);
+
   return (
     <>
-      <Modal show={isOpen} onHide={onCloseModal} fullscreen>
+      <Modal show={isOpen} onHide={onCloseModal} size="xl">
         <ModalHeader closeButton={true}>Transhipment</ModalHeader>
         <ModalBody>
           <Input
@@ -364,6 +371,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             onChange={async (e) => {
               formik.setFieldValue("vessel", e.target.value);
               formik.setFieldValue("mv", e.target.value?.mv);
+              formik.setFieldValue("company", e.target.value?.company);
               const bargingDetail = await ReadBarging(e.target.value.value);
               const detail = bargingDetail.data.detail.map((item) => ({
                 ...item,
@@ -371,6 +379,9 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
                 arrivedatJetty:
                   item.arrivedatJetty &&
                   moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
+                alongside:
+                  item.alongside &&
+                  moment(item.alongside).format("yyyy-MM-DD HH:mm"),
                 commanced:
                   item.commanced &&
                   moment(item.commanced).format("yyyy-MM-DD HH:mm"),
@@ -389,6 +400,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             isError={formik.errors.vessel && formik.touched.vessel}
             api={PagedSearchBarging}
             handleSetOptions={(item) => ({
+              company: item.company,
               value: item.uuid,
               label: `${item.no} - ${item.mv}`,
               mv: item.mv,
@@ -478,12 +490,18 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             errorMessage={formik.errors?.blending}
             isError={formik.errors.blending && formik.touched.blending}
           />
-          <DataTable
-            data={formik.values.detail}
-            tableHeader={tableHeaders}
-            tableBody={tableBody}
-            usePagination={false}
-          />
+          <div
+            style={{
+              overflowX: "scroll",
+            }}
+          >
+            <DataTable
+              data={formik.values.detail}
+              tableHeader={tableHeaders}
+              tableBody={tableBody}
+              usePagination={false}
+            />
+          </div>
         </ModalBody>
         <ModalFooter>
           <button
