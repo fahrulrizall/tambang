@@ -29,6 +29,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.send("✅ Backend API is running successfully!");
+});
+
 app.use("/auth", AuthenticationRoutes);
 app.use("/users", VerifyToken, UsersRoutes);
 app.use("/tugboat", VerifyToken, TugBoatRoutes);

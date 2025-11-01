@@ -6,8 +6,8 @@ import haa from "../asset/haa.png";
 
 export default function Login({ setIsValidLogin }) {
   const initial = {
-    username: "username",
-    password: "password",
+    username: "",
+    password: "",
   };
 
   const accessToken = "accessToken";
