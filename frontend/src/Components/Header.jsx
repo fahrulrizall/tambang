@@ -4,6 +4,7 @@ import jwtDecode from "jwt-decode";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate } from "react-router-dom";
 import { HandleLogout } from "../API";
+import kjb from "../asset/kjb.png";
 
 export default function Header({ setIsShowSidebar }) {
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ export default function Header({ setIsShowSidebar }) {
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
         <a href="index.html" className="logo d-flex align-items-center">
-          <img src="assets/img/logo.png" alt="" />
-          <span className="d-none d-lg-block">Traceback</span>
+          <img src={kjb} alt="" />
+          <span className="d-none d-lg-block fs-5">Kaltim Jaya Bara </span>
         </a>
         <a onClick={() => setIsShowSidebar((prev) => !prev)}>
           <i className="bi bi-list toggle-sidebar-btn"></i>

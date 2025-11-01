@@ -1,7 +1,6 @@
 export { default as Header } from "./Header";
 export { default as Sidebar } from "./Sidebar";
 export { default as Footer } from "./Footer";
-export { default as Login } from "./Login";
 export { default as ModalPopUp } from "./ModalPopUp";
 export { default as Toaster } from "./Toaster";
 export { default as Loading } from "./Loading";
@@ -9,3 +8,4 @@ export { default as DataTable } from "./DataTable";
 export { default as Input } from "./Input";
 export { default as Button } from "./Button";
 export { default as ConfirmationModal } from "./ConfirmationModal";
+export { default as CopySummaryButton } from "./CopySummaryButton";

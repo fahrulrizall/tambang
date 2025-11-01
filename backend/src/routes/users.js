@@ -14,7 +14,7 @@ UsersRoutes.get(
 );
 UsersRoutes.post(
   "/",
-  CheckUserRole(masterRole),
+  // CheckUserRole(masterRole),
   [
     body("name").isLength({ min: 3 }).withMessage("name min 3"),
     body("email").isEmail().withMessage("invalid email address"),

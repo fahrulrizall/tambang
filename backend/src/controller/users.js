@@ -2,6 +2,9 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const { User } = require("../db/models");
 const sequelizeConnection = require("../config/database-connection.js");
+const { decodeToken } = require("../utils/index.js");
+const moment = require("moment");
+const { v4: uuidv4 } = require("uuid");
 
 const pagedSearchUsers = async (req, res) => {
   const errros = validationResult(req);
@@ -94,7 +97,7 @@ const createNewUser = async (req, res) => {
     email: request.email,
     password: hashPassword,
     username: request.username,
-    plantUuid: request.plantUuid,
+    uuid: uuidv4(),
   };
 
   const transaction = await sequelizeConnection.transaction();
@@ -110,6 +113,8 @@ const createNewUser = async (req, res) => {
       },
       { transaction }
     );
+
+    await transaction.commit();
 
     res.status(201).json({
       messages: request,
@@ -173,6 +178,8 @@ const updateUser = async (req, res) => {
         transaction,
       }
     );
+
+    await transaction.commit();
 
     res.json({
       data: {

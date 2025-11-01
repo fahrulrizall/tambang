@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   UpdateTranshipment,
   ReadTranshipment,
@@ -7,7 +7,12 @@ import {
   CreateTranshipment,
   DeleteTranshipment,
 } from "../../API";
-import { ModalPopUp, Input, DataTable } from "../../Components";
+import {
+  ModalPopUp,
+  Input,
+  DataTable,
+  CopySummaryButton,
+} from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import { useFormik } from "formik";
 import { Action } from "../../Constant";
@@ -144,7 +149,9 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
         .then((response) =>
           formik.setValues({
             ...response.data,
-            date: moment(response.data.date).format("yyyy-MM-DD"),
+            norTendered:
+              response.data.norTendered &&
+              moment(response.data.norTendered).format("yyyy-MM-DD HH:mm"),
             vessel: {
               value: response.data.bargingUuid,
               label: response.data.no,
@@ -352,8 +359,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     },
   ];
 
-  console.log(formik.values);
-
   return (
     <>
       <Modal show={isOpen} onHide={onCloseModal} size="xl">
@@ -477,6 +482,15 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             isError={formik.errors.notify && formik.touched.notify}
           />
           <Input
+            label="Nor Tendered"
+            type="datetime-local"
+            name="norTendered"
+            onChange={formik.handleChange}
+            value={formik.values.norTendered}
+            errorMessage={formik.errors?.norTendered}
+            isError={formik.errors.norTendered && formik.touched.norTendered}
+          />
+          <Input
             label="Blending"
             type="checkbox"
             name="blending"
@@ -508,6 +522,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
           >
             Close
           </button>
+          <CopySummaryButton data={formik.values} />
           {action === Action.VIEW && (
             <button
               className="ms-2 btn btn-danger"

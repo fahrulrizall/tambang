@@ -48,6 +48,9 @@ VwTranshipment.init(
     company: {
       type: DataTypes.STRING(),
     },
+    norTendered: {
+      type: DataTypes.DATE(),
+    },
     ...AuditableField,
   },
   {

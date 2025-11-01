@@ -22,7 +22,7 @@ User.init(
       type: DataTypes.STRING(),
     },
     password: {
-      type: DataTypes.DATE(),
+      type: DataTypes.STRING(),
     },
     refreshToken: {
       type: DataTypes.DATE(),

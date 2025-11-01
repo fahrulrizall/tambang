@@ -27,7 +27,7 @@ export default function Sidebar({ setIsShowSidebar }) {
   return (
     <aside id="sidebar" className="sidebar" ref={sidebarRef}>
       <ul className="sidebar-nav" id="sidebar-nav">
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <a
             className={`nav-link ${active === "dashboard" ? "" : "collapsed"}`}
             href="#"
@@ -35,7 +35,7 @@ export default function Sidebar({ setIsShowSidebar }) {
             <i className="bi bi-grid"></i>
             <span>Dashboard</span>
           </a>
-        </li>
+        </li> */}
 
         <li className="nav-item">
           <a

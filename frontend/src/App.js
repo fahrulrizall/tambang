@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AllRoutes from "./Routes";
-import { Login } from "./Components";
+import Login from "./Pages/Login";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import { ApplicationStoreProvider } from "./Hook/UserHook";
