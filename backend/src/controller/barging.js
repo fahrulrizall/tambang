@@ -53,6 +53,53 @@ const pagedSearcBarging = async (req, res) => {
   }
 };
 
+const pagedSearcBargingDetail = async (req, res) => {
+  const errros = validationResult(req);
+  const { bargingUuid } = req.params;
+  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder } =
+    req.query;
+
+  let order = [];
+  if (orderByFieldName) {
+    const direction =
+      sortOrder && sortOrder.toUpperCase() === "DESC" ? "DESC" : "ASC";
+    order = [[orderByFieldName, direction]];
+  }
+
+  if (!errros.isEmpty()) {
+    return res.status(400).json({
+      messages: errros.array(),
+    });
+  }
+
+  const Op = sequelize.Op;
+
+  try {
+    const whereCondition = {
+      ...(keyword && {
+        [Op.or]: [{ mv: { [Op.like]: `%${keyword}%` } }],
+      }),
+      ...(bargingUuid && { bargingUuid: bargingUuid }),
+    };
+
+    const result = await VwBargingDetail.findAndCountAll({
+      where: whereCondition,
+      limit: parseInt(pageSize),
+      offset: parseInt(pageSize * pageIndex),
+      order: order,
+    });
+
+    res.json({
+      data: result.rows,
+      totalCount: result.count,
+      pageIndex: parseInt(pageIndex),
+      pageSize: parseInt(pageSize),
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
 const createNewBarging = async (req, res) => {
   const errros = validationResult(req);
   const request = req.body;
@@ -78,17 +125,52 @@ const createNewBarging = async (req, res) => {
       { transaction }
     );
 
-    if (Array.isArray(request.detail) && request.detail.length > 0) {
-      const details = request.detail.map((item) => ({
-        ...item,
-        uuid: uuidv4(),
-        bargingUuid: request.uuid,
-        createdBy: decodeToken(req, "uuid"),
-        createdDateTime: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
-      }));
+    // if (Array.isArray(request.detail) && request.detail.length > 0) {
+    //   const details = request.detail.map((item) => ({
+    //     ...item,
+    //     uuid: uuidv4(),
+    //     bargingUuid: request.uuid,
+    //     createdBy: decodeToken(req, "uuid"),
+    //     createdDateTime: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
+    //   }));
 
-      await BargingDetail.bulkCreate(details, { transaction });
-    }
+    //   await BargingDetail.bulkCreate(details, { transaction });
+    // }
+
+    await transaction.commit();
+
+    res.status(201).json({
+      id: request.code,
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
+const createNewBargingDetail = async (req, res) => {
+  const errros = validationResult(req);
+  const request = req.body;
+  request.uuid = uuidv4();
+
+  if (!errros.isEmpty()) {
+    return res.status(400).json({
+      messages: errros.array(),
+    });
+  }
+
+  const transaction = await sequelizeConnection.transaction();
+
+  try {
+    await BargingDetail.create(
+      {
+        ...request,
+        createdBy: decodeToken(req, "uuid"),
+        createdDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      { transaction }
+    );
 
     await transaction.commit();
 
@@ -130,24 +212,45 @@ const updateBarging = async (req, res) => {
       }
     );
 
-    await BargingDetail.destroy({
-      where: { bargingUuid: uuid },
-      transaction,
+    await transaction.commit();
+
+    res.json({
+      id: uuid,
     });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
 
-    const details = request.detail.map((item) => ({
-      ...item,
-      uuid: uuidv4(),
-      bargingUuid: uuid,
-      createdBy: decodeToken(req, "uuid"),
-      createdDateTime: moment(new Date().toUTCString()).format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
-    }));
+const updateBargingDetail = async (req, res) => {
+  const { uuid } = req.params;
+  const request = req.body;
+  const errros = validationResult(req);
 
-    if (details.length > 0) {
-      await BargingDetail.bulkCreate(details, { transaction });
-    }
+  if (!errros.isEmpty()) {
+    return res.status(400).json({
+      messages: errros.array(),
+    });
+  }
+
+  const transaction = await sequelizeConnection.transaction();
+
+  try {
+    await BargingDetail.update(
+      {
+        ...request,
+        lastModifiedBy: decodeToken(req, "uuid"),
+        lastModifiedDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      {
+        where: {
+          uuid,
+        },
+        transaction,
+      }
+    );
 
     await transaction.commit();
 
@@ -185,6 +288,27 @@ const deleteBarging = async (req, res) => {
   }
 };
 
+const deleteBargingDetail = async (req, res) => {
+  const { uuid } = req.params;
+
+  const transaction = await sequelizeConnection.transaction();
+
+  try {
+    await BargingDetail.destroy({
+      where: {
+        uuid,
+      },
+      transaction,
+    });
+    await transaction.commit();
+    res.json({
+      uuid,
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
 const readBarging = async (req, res) => {
   const { uuid } = req.params;
 
@@ -195,17 +319,26 @@ const readBarging = async (req, res) => {
       },
     });
 
-    const detail = await VwBargingDetail.findAll({
+    res.json({
+      ...result.dataValues,
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
+const readBargingDetail = async (req, res) => {
+  const { uuid } = req.params;
+
+  try {
+    const result = await VwBargingDetail.findOne({
       where: {
-        bargingUuid: uuid,
+        uuid: uuid,
       },
-      order: [["no", "asc"]],
-      raw: true,
     });
 
     res.json({
       ...result.dataValues,
-      detail: detail,
     });
   } catch (error) {
     ApiError(res, error);
@@ -214,8 +347,13 @@ const readBarging = async (req, res) => {
 
 module.exports = {
   pagedSearcBarging,
+  pagedSearcBargingDetail,
   createNewBarging,
+  createNewBargingDetail,
   updateBarging,
+  updateBargingDetail,
   deleteBarging,
+  deleteBargingDetail,
   readBarging,
+  readBargingDetail,
 };

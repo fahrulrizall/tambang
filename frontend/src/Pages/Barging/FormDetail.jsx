@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { ReadBarging, CreateBarging, UpdateBarging } from "../../API";
+import {
+  ReadBarging,
+  CreateBarging,
+  UpdateBarging,
+  PagedSearchTugBoat,
+} from "../../API";
 import { Input } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import { useFormik } from "formik";
@@ -22,6 +27,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       date: moment().format("yyyy-MM-DD"),
       company: "",
       mv: "",
+      detail: [],
       createdDateTime: null,
       createdBy: null,
       lastModifiedDateTime: null,
@@ -31,6 +37,11 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       const model = {
         ...values,
         company: values.company?.value,
+        detail: values.detail.map((item) => ({
+          ...item,
+          bargingUuid: values.uuid,
+          tugBoatUuid: item.tugBoat?.value,
+        })),
       };
       if (action === Action.CREATE) {
         CreateBarging(model)
@@ -102,6 +113,25 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               label: options.find((a) => a.value == response.data.company)
                 .label,
             },
+            detail: response.data.detail.map((item) => ({
+              ...item,
+              tugBoat: {
+                value: item.tugBoatUuid,
+                label: item.name,
+              },
+              arrivedatJetty:
+                item.arrivedatJetty &&
+                moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
+              commanced:
+                item.commanced &&
+                moment(item.commanced).format("yyyy-MM-DD HH:mm"),
+              completed:
+                item.completed &&
+                moment(item.completed).format("yyyy-MM-DD HH:mm"),
+              castedOff:
+                item.castedOff &&
+                moment(item.castedOff).format("yyyy-MM-DD HH:mm"),
+            })),
           })
         )
         .catch((err) => console.log(err));
@@ -118,19 +148,10 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   return (
     <>
       <Modal show={isOpen} onHide={onCloseModal} size="md">
-        <ModalHeader closeButton={true}>Barging</ModalHeader>
+        <ModalHeader closeButton={true}>Barging Detail</ModalHeader>
         <ModalBody>
           <Input
-            label="Date"
-            type="date"
-            name="date"
-            onChange={formik.handleChange}
-            value={formik.values.date}
-            errorMessage={formik.errors?.date}
-            isError={formik.errors.date && formik.touched.date}
-          />
-          <Input
-            label="No Shipment"
+            label="No"
             type="number"
             name="no"
             onChange={formik.handleChange}
@@ -138,26 +159,92 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             errorMessage={formik.errors?.no}
             isError={formik.errors.no && formik.touched.no}
           />
-
           <Input
-            label="Supply to MV"
+            type="select-api"
+            name="tugBoat"
+            label="TugBoat"
+            value={formik.values.tugBoat}
+            onChange={(e) => {
+              formik.setFieldValue("tugBoat", e.target.value);
+              formik.setFieldValue("barge", e.target.value?.barge);
+            }}
+            api={PagedSearchTugBoat}
+            handleSetOptions={(pt) => ({
+              value: pt.uuid,
+              label: pt.name,
+              barge: pt.barge,
+            })}
+          />
+          <Input
+            label="Barge"
             type="text"
-            name="mv"
+            name="barge"
             onChange={formik.handleChange}
-            value={formik.values.mv}
-            errorMessage={formik.errors?.mv}
-            isError={formik.errors.mv && formik.touched.mv}
+            value={formik.values.barge}
+            errorMessage={formik.errors?.barge}
+            isError={formik.errors.barge && formik.touched.barge}
           />
 
           <Input
-            label="Company"
-            type="select"
-            name="company"
+            label="Cargo"
+            type="number"
+            name="cargo"
             onChange={formik.handleChange}
-            value={formik.values.company}
-            errorMessage={formik.errors?.company}
-            isError={formik.errors.company && formik.touched.company}
-            options={options}
+            value={formik.values.cargo}
+            errorMessage={formik.errors?.cargo}
+            isError={formik.errors.cargo && formik.touched.cargo}
+          />
+
+          <Input
+            label="Arrived at Jetty"
+            type="date"
+            name="arrivedatJetty"
+            onChange={formik.handleChange}
+            value={formik.values.arrivedatJetty}
+            errorMessage={formik.errors?.arrivedatJetty}
+            isError={
+              formik.errors.arrivedatJetty && formik.touched.arrivedatJetty
+            }
+          />
+
+          <Input
+            label="Commanced"
+            type="date"
+            name="commanced"
+            onChange={formik.handleChange}
+            value={formik.values.commanced}
+            errorMessage={formik.errors?.commanced}
+            isError={formik.errors.commanced && formik.touched.commanced}
+          />
+
+          <Input
+            label="Completed"
+            type="date"
+            name="completed"
+            onChange={formik.handleChange}
+            value={formik.values.completed}
+            errorMessage={formik.errors?.completed}
+            isError={formik.errors.completed && formik.touched.completed}
+          />
+
+          <Input
+            label="Casted Off"
+            type="date"
+            name="castedOff"
+            onChange={formik.handleChange}
+            value={formik.values.castedOff}
+            errorMessage={formik.errors?.castedOff}
+            isError={formik.errors.castedOff && formik.touched.castedOff}
+          />
+
+          <Input
+            label="Remarks"
+            type="text"
+            name="remarks"
+            onChange={formik.handleChange}
+            value={formik.values.remarks}
+            errorMessage={formik.errors?.remarks}
+            isError={formik.errors.remarks && formik.touched.remarks}
           />
         </ModalBody>
         <ModalFooter>

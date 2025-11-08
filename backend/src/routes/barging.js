@@ -4,33 +4,39 @@ const BargingController = require("../controller/barging.js");
 const { CheckUserRole } = require("../middleware/index.js");
 const { allRole } = require("../constant/index.js");
 
-const TugBoatRoutes = express.Router();
+const BargingRoutes = express.Router();
 
-TugBoatRoutes.get(
+BargingRoutes.get(
   "/list",
   CheckUserRole(allRole),
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
   BargingController.pagedSearcBarging
 );
-TugBoatRoutes.post(
+BargingRoutes.get(
+  "/list/detail/:bargingUuid",
+  CheckUserRole(allRole),
+  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
+  BargingController.pagedSearcBargingDetail
+);
+BargingRoutes.post(
   "/",
   CheckUserRole(allRole),
   BargingController.createNewBarging
 );
-TugBoatRoutes.patch(
+BargingRoutes.patch(
   "/:uuid",
   CheckUserRole(allRole),
   BargingController.updateBarging
 );
-TugBoatRoutes.delete(
+BargingRoutes.delete(
   "/:uuid",
   CheckUserRole(allRole),
   BargingController.deleteBarging
 );
-TugBoatRoutes.get(
+BargingRoutes.get(
   "/:uuid",
   CheckUserRole(allRole),
   BargingController.readBarging
 );
 
-module.exports = TugBoatRoutes;
+module.exports = BargingRoutes;
