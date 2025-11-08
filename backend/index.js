@@ -15,15 +15,7 @@ const { VerifyToken } = require("./src/middleware/index.js");
 app.use(
   cors({
     credentials: true,
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "https://anova-traceability.com",
-      "https://staging.anova-traceability.com",
-      "https://traceability.anova-traceability.com",
-      "http://anovafoodtraceability.my.id",
-      "https://anovafoodtraceability.my.id",
-    ],
+    origin: ["http://localhost:3000", "https://shipmentadmiregroup.com"],
   })
 );
 app.use(express.json());
