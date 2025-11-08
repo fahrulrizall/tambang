@@ -1,18 +1,26 @@
-import { PagedSearchTranshipment } from "../../API";
-import DataTable from "../../Components/DataTable";
+import { PagedSearchTranshipment, DeleteTranshipment } from "../../API";
 import { useState } from "react";
 import Form from "./Form";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
-import moment from "moment";
-import { Input } from "../../Components";
+import { Input, ModalPopUp, DataTable } from "../../Components";
 import { Row, Col } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
+import DetailList from "./ListDetail";
 
 export default function PlantTable() {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(false);
-  const { lastDataModificationTimestamp, setLastDataModificationTimestamp } =
-    useApplicationStoreContext();
+  const [modalDelete, setModalDelete] = useState(false);
+  const {
+    lastDataModificationTimestamp,
+    setLastDataModificationTimestamp,
+    setToastInfo,
+    setIsShowToast,
+  } = useApplicationStoreContext();
   const [company, setCompany] = useState();
+  const [params, setParams] = useSearchParams();
+
+  const uuid = params.get("uuid");
 
   const tableHeaders = [
     {
@@ -87,18 +95,47 @@ export default function PlantTable() {
     },
     {
       view: (data) => (
-        <button
-          className="btn btn-sm btn-primary"
-          onClick={() => {
-            setSelected(data);
-            setIsOpen(true);
-          }}
-          style={{
-            fontSize: "10px",
-          }}
-        >
-          <i className="bi bi-eye"></i>
-        </button>
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-sm btn-warning"
+            onClick={() => {
+              setSelected(data);
+              setIsOpen(true);
+            }}
+            style={{
+              fontSize: "10px",
+            }}
+          >
+            <i className="bi bi-pencil"></i>
+          </button>
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => {
+              setSelected(data);
+              setModalDelete(true);
+            }}
+            style={{
+              fontSize: "10px",
+            }}
+          >
+            <i className="bi bi-trash"></i>
+          </button>
+          <button
+            className="btn btn-sm btn-primary"
+            onClick={() => {
+              setSelected(data);
+              setParams({
+                uuid: data.uuid,
+                bargingUuid: data.bargingUuid,
+              });
+            }}
+            style={{
+              fontSize: "10px",
+            }}
+          >
+            <i className="bi bi-eye"></i>
+          </button>
+        </div>
       ),
     },
   ];
@@ -113,6 +150,63 @@ export default function PlantTable() {
       label: "PT. HAMPARAN ANUGRAH ABADI",
     },
   ];
+
+  const deleteData = () => {
+    DeleteTranshipment(selected.uuid)
+      .then(() => {
+        setToastInfo({
+          message: "Transhipment successfully deleted",
+          background: "success",
+        });
+        setIsShowToast(true);
+        setModalDelete(false);
+
+        setLastDataModificationTimestamp(new Date().getTime());
+      })
+      .catch((err) => {
+        setToastInfo({
+          message:
+            err.response.status === 403
+              ? err.response?.data?.message
+              : "Transhipment failed deleted",
+          background: "danger",
+        });
+        setIsShowToast(true);
+      });
+  };
+
+  const component = () => {
+    return (
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Delete Transhipment</h5>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          />
+        </div>
+        <div className="modal-body">Are you sure delete this Transhipment?</div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setModalDelete(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => deleteData()}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <main id="main" className="main">
@@ -161,8 +255,14 @@ export default function PlantTable() {
                 />
               </div>
             </div>
+            {uuid && <DetailList selected={selected} />}
           </div>
           <Form isOpen={isOpen} selected={selected} toggle={setIsOpen} />
+          <ModalPopUp
+            component={component}
+            isOpen={modalDelete}
+            setIsOpen={setModalDelete}
+          />
         </div>
       </section>
     </main>

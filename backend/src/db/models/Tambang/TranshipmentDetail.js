@@ -15,7 +15,7 @@ TranshipmentDetail.init(
     transhipmentUuid: {
       type: DataTypes.UUID(),
     },
-    bargingUuid: {
+    bargingDetailUuid: {
       type: DataTypes.UUID(),
     },
     no: {

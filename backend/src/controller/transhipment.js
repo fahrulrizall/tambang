@@ -61,7 +61,7 @@ const pagedSearchTranshipment = async (req, res) => {
 const pagedSearchTranshipmentDetail = async (req, res) => {
   const errros = validationResult(req);
   const { transhipmentUuid } = req.params;
-  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder, company } =
+  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder } =
     req.query;
 
   let order = [];

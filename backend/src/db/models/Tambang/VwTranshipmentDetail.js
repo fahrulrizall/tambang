@@ -15,7 +15,7 @@ VwTranshipmentDetail.init(
     transhipmentUuid: {
       type: DataTypes.UUID(),
     },
-    bargingUuid: {
+    bargingDetailUuid: {
       type: DataTypes.UUID(),
     },
     no: {
@@ -35,9 +35,6 @@ VwTranshipmentDetail.init(
     },
     castedOff: {
       type: DataTypes.DATE(),
-    },
-    remarks: {
-      type: DataTypes.STRING(),
     },
     alongside: {
       type: DataTypes.DATE(),

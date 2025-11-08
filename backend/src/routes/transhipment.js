@@ -34,7 +34,7 @@ TranshipmentRoutes.patch(
   TranshipmentController.updateTranshipment
 );
 TranshipmentRoutes.patch(
-  "detaul/:uuid",
+  "/detail/:uuid",
   CheckUserRole(allRole),
   TranshipmentController.updateTranshipmentDetail
 );
@@ -44,7 +44,7 @@ TranshipmentRoutes.delete(
   TranshipmentController.deleteTranshipment
 );
 TranshipmentRoutes.delete(
-  "detail/:uuid",
+  "/detail/:uuid",
   CheckUserRole(allRole),
   TranshipmentController.deleteTranshipmentDetail
 );
@@ -54,7 +54,7 @@ TranshipmentRoutes.get(
   TranshipmentController.readTranshipment
 );
 TranshipmentRoutes.get(
-  "detail/:uuid",
+  "/detail/:uuid",
   CheckUserRole(allRole),
   TranshipmentController.readTranshipmentDetail
 );

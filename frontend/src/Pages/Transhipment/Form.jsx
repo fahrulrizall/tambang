@@ -44,11 +44,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
       const model = {
         ...values,
         bargingUuid: values.vessel?.value,
-        detail: values.detail.map((item) => ({
-          ...item,
-          bargingUuid: values.uuid,
-          tugBoatUuid: item.tugBoatUuid,
-        })),
       };
       if (action === Action.CREATE) {
         CreateTranshipment(model)
