@@ -193,8 +193,6 @@ export default function DetailList({ selected: headerSelected }) {
     );
   };
 
-  console.log(data);
-
   return (
     <div className="card">
       <div className="card-body">
@@ -212,7 +210,7 @@ export default function DetailList({ selected: headerSelected }) {
           </div>
         </div>
         <Tabs
-          defaultActiveKey="profile"
+          defaultActiveKey="home"
           id="uncontrolled-tab-example"
           className="mb-3"
         >
@@ -263,17 +261,17 @@ export default function DetailList({ selected: headerSelected }) {
                 </div>
                 <div>
                   <div class="section-title">
-                    Discharge, {headerSelected.dischargingPort}
+                    Discharge, {headerSelected?.dischargingPort}
                   </div>
                   <table class="table table-borderless summary-table">
                     <tbody>
                       <tr>
                         <td>Stowage Plan :</td>
-                        <td>{headerSelected.stowagePlan}</td>
+                        <td>{headerSelected?.stowagePlan}</td>
                       </tr>
                       <tr>
                         <td>NOR Tendered :</td>
-                        <td>{headerSelected.norTendered}</td>
+                        <td>{headerSelected?.norTendered}</td>
                       </tr>
                       <tr>
                         <td>Previous Cargo :</td>
@@ -288,7 +286,7 @@ export default function DetailList({ selected: headerSelected }) {
                       <tr>
                         <td>Balance Cargo :</td>
                         <td>
-                          {headerSelected.stowagePlan -
+                          {headerSelected?.stowagePlan -
                             data.reduce((acc, item) => acc + item.cargoOnb, 0)}
                         </td>
                       </tr>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const CopySummaryButton = ({ data, header }) => {
   const [copied, setCopied] = useState(false);
 
-  const total = data.reduce((acc, item) => acc + item.cargoOnb, 0);
+  const total = data?.reduce((acc, item) => acc + item.cargoOnb, 0);
 
   const cargoPerBargeText = `Cargo per Barge :
   ${data.map((item) => `${item.name}\t${item.cargoOnb}`).join("\n")}
@@ -22,12 +22,12 @@ const CopySummaryButton = ({ data, header }) => {
 
   const summaryText = `SUMMARY
 
-  Discharge, ${header.dischargingPort}
-  Stowage Plan :	${header.stowagePlan}
-  NOR Tendered :	${header.norTendered}
+  Discharge, ${header?.dischargingPort}
+  Stowage Plan :	${header?.stowagePlan}
+  NOR Tendered :	${header?.norTendered}
   Previous Cargo :	-
   Cargo Onboard :	${total}
-  Balance Cargo :	${header.stowagePlan - total}
+  Balance Cargo :	${header?.stowagePlan - total}
   Loading Rate DTD :	-
   Loading Rate PTD :	 ${(total * 24) / 12}
   TPH :	982
