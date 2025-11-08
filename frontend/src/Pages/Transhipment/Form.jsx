@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   UpdateTranshipment,
   ReadTranshipment,
@@ -7,22 +7,11 @@ import {
   CreateTranshipment,
   DeleteTranshipment,
 } from "../../API";
-import {
-  ModalPopUp,
-  Input,
-  DataTable,
-  CopySummaryButton,
-} from "../../Components";
+import { ModalPopUp, Input } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import { useFormik } from "formik";
 import { Action } from "../../Constant";
-import {
-  Modal,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  FormControl,
-} from "react-bootstrap";
+import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
 import moment from "moment";
 
 export default function TugBoatForm({ isOpen, toggle, selected }) {
@@ -156,25 +145,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               value: response.data.bargingUuid,
               label: response.data.no,
             },
-            detail: response.data.detail.map((item) => ({
-              ...item,
-              tugBoat: item.name,
-              arrivedatJetty:
-                item.arrivedatJetty &&
-                moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
-              alongside:
-                item.alongside &&
-                moment(item.alongside).format("yyyy-MM-DD HH:mm"),
-              commanced:
-                item.commanced &&
-                moment(item.commanced).format("yyyy-MM-DD HH:mm"),
-              completed:
-                item.completed &&
-                moment(item.completed).format("yyyy-MM-DD HH:mm"),
-              castedOff:
-                item.castedOff &&
-                moment(item.castedOff).format("yyyy-MM-DD HH:mm"),
-            })),
           })
         )
         .catch((err) => console.log(err));
@@ -221,147 +191,9 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     formik.resetForm();
   };
 
-  const tableHeaders = [
-    {
-      name: "No",
-      style: {
-        minWidth: 50,
-      },
-    },
-    {
-      name: "TugBoat",
-      style: {
-        minWidth: 160,
-      },
-    },
-    {
-      name: "Barge",
-      style: {
-        minWidth: 160,
-      },
-    },
-    {
-      name: "Arrived at Jetty",
-    },
-    {
-      name: "Alongside",
-    },
-    {
-      name: "Commanced",
-    },
-    {
-      name: "Completed",
-    },
-    {
-      name: "Casted Off",
-    },
-    {
-      name: "Cargo ONB",
-      style: {
-        minWidth: 150,
-      },
-    },
-  ];
-
-  const tableBody = [
-    {
-      name: "no",
-    },
-    {
-      name: "tugBoat",
-    },
-    {
-      name: "barge",
-    },
-    {
-      name: "arrivedatJetty",
-      view: (data) => (
-        <FormControl
-          type="datetime-local"
-          value={data.arrivedatJetty}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].arrivedatJetty = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-    {
-      name: "alongside",
-      view: (data) => (
-        <FormControl
-          type="datetime-local"
-          value={data.alongside}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].alongside = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-    {
-      name: "commanced",
-      view: (data) => (
-        <FormControl
-          type="datetime-local"
-          value={data.commanced}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].commanced = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-    {
-      name: "completed",
-      view: (data) => (
-        <FormControl
-          type="datetime-local"
-          value={data.completed}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].completed = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-    {
-      name: "castedOff",
-      view: (data) => (
-        <FormControl
-          type="datetime-local"
-          value={data.castedOff}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].castedOff = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-    {
-      name: "cargoOnb",
-      view: (data) => (
-        <FormControl
-          type="number"
-          value={data.cargoOnb}
-          onChange={(e) => {
-            const prev = [...formik.values.detail];
-            prev[data.index].cargoOnb = e.target.value;
-            formik.setFieldValue("detail", prev);
-          }}
-        />
-      ),
-    },
-  ];
-
   return (
     <>
-      <Modal show={isOpen} onHide={onCloseModal} size="xl">
+      <Modal show={isOpen} onHide={onCloseModal} size="md">
         <ModalHeader closeButton={true}>Transhipment</ModalHeader>
         <ModalBody>
           <Input
@@ -499,18 +331,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             errorMessage={formik.errors?.blending}
             isError={formik.errors.blending && formik.touched.blending}
           />
-          <div
-            style={{
-              overflowX: "scroll",
-            }}
-          >
-            <DataTable
-              data={formik.values.detail}
-              tableHeader={tableHeaders}
-              tableBody={tableBody}
-              usePagination={false}
-            />
-          </div>
         </ModalBody>
         <ModalFooter>
           <button
@@ -522,7 +342,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
           >
             Close
           </button>
-          <CopySummaryButton data={formik.values} />
+          {/* <CopySummaryButton data={formik.values} /> */}
           {action === Action.VIEW && (
             <button
               className="ms-2 btn btn-danger"

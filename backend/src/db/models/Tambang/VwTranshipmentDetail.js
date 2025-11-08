@@ -2,11 +2,11 @@ const { Model, DataTypes } = require("sequelize");
 const { AuditableField } = require("../../../constant");
 const sequelizeConnection = require("../../../config/database-connection");
 
-class TranshipmentDetail extends Model {
+class VwTranshipmentDetail extends Model {
   static associate(models) {}
 }
 
-TranshipmentDetail.init(
+VwTranshipmentDetail.init(
   {
     uuid: {
       type: DataTypes.UUID,
@@ -45,14 +45,20 @@ TranshipmentDetail.init(
     cargoOnb: {
       type: DataTypes.FLOAT(),
     },
+    barge: {
+      type: DataTypes.STRING(),
+    },
+    name: {
+      type: DataTypes.STRING(),
+    },
     ...AuditableField,
   },
   {
     timestamps: false,
     sequelize: sequelizeConnection,
-    modelName: "transhipmentdetail",
-    tableName: "transhipmentdetail",
+    modelName: "vw_transhipmentdetail",
+    tableName: "vw_transhipmentdetail",
   }
 );
 
-module.exports = TranshipmentDetail;
+module.exports = VwTranshipmentDetail;

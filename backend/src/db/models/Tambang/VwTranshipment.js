@@ -12,12 +12,6 @@ VwTranshipment.init(
       type: DataTypes.UUID,
       primaryKey: true,
     },
-    no: {
-      type: DataTypes.NUMBER(),
-    },
-    mv: {
-      type: DataTypes.STRING(),
-    },
     bargingUuid: {
       type: DataTypes.UUID(),
     },
@@ -50,6 +44,9 @@ VwTranshipment.init(
     },
     norTendered: {
       type: DataTypes.DATE(),
+    },
+    mv: {
+      type: DataTypes.STRING(),
     },
     ...AuditableField,
   },

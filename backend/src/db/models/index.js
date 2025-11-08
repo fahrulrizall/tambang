@@ -5,6 +5,7 @@ const VwBargingDetail = require("./Tambang/VwBarging");
 const User = require("./user");
 const Transhipment = require("./Tambang/Transhipment");
 const TranshipmentDetail = require("./Tambang/TranshipmentDetail");
+const VwTranshipmentDetail = require("./Tambang/VwTranshipmentDetail");
 const VwTranshipment = require("./Tambang/VwTranshipment");
 
 module.exports = {
@@ -14,6 +15,7 @@ module.exports = {
   VwBargingDetail,
   User,
   Transhipment,
-  VwTranshipment,
+  VwTranshipmentDetail,
   TranshipmentDetail,
+  VwTranshipment,
 };
