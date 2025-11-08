@@ -18,6 +18,7 @@ export default function DataTable({
   isAdd = true,
   onAdd,
   usePagination = true,
+  callback,
 }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(0);
@@ -34,6 +35,7 @@ export default function DataTable({
           setResult(response.data.data);
           setTotalCount(response.data.totalCount);
           setIsLoading(false);
+          callback && callback(response);
         });
     }
   }, [pageIndex, ...(dependencies || [])]);

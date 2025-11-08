@@ -77,7 +77,7 @@ const pagedSearcBargingDetail = async (req, res) => {
   try {
     const whereCondition = {
       ...(keyword && {
-        [Op.or]: [{ mv: { [Op.like]: `%${keyword}%` } }],
+        [Op.or]: [{ barge: { [Op.like]: `%${keyword}%` } }],
       }),
       ...(bargingUuid && { bargingUuid: bargingUuid }),
     };
@@ -264,26 +264,27 @@ const updateBargingDetail = async (req, res) => {
 
 const deleteBarging = async (req, res) => {
   const { uuid } = req.params;
-
   const transaction = await sequelizeConnection.transaction();
 
   try {
-    await BargingDetail.destroy({
-      where: { bargingUuid: uuid },
-      transaction,
-    });
+    if (!uuid) {
+      return res.status(400).json({ message: "UUID is required" });
+    }
 
-    await Barging.destroy({
-      where: {
-        uuid,
-      },
-      transaction,
-    });
+    const barging = await Barging.findOne({ where: { uuid }, transaction });
+    if (!barging) {
+      await transaction.rollback();
+      return res.status(404).json({ message: "Barging not found" });
+    }
+
+    await BargingDetail.destroy({ where: { bargingUuid: uuid }, transaction });
+    await Barging.destroy({ where: { uuid }, transaction });
+
     await transaction.commit();
-    res.json({
-      uuid,
-    });
+
+    res.json({ message: "Deleted successfully", uuid });
   } catch (error) {
+    await transaction.rollback();
     ApiError(res, error);
   }
 };

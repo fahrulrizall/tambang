@@ -6,7 +6,7 @@ import moment from "moment";
 import { Row, Col } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { ModalPopUp, DataTable, Input } from "../../Components";
-import DetailList from "./DetailList";
+import DetailList from "./ListDetail";
 
 export default function PlantTable() {
   const [isOpen, setIsOpen] = useState(false);

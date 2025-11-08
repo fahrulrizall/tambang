@@ -1,33 +1,25 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  FormControl,
-} from "react-bootstrap";
-import { DataTable } from "../../Components";
-import { useFormik } from "formik";
+import { Row, Col } from "react-bootstrap";
+import { DataTable, Input, ModalPopUp } from "../../Components";
 import { useSearchParams } from "react-router-dom";
-import { PagedSearchBargingDetail } from "../../API";
+import { PagedSearchBargingDetail, DeleteBargingDetail } from "../../API";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import moment from "moment";
 import FormDetail from "./FormDetail";
 
 export default function DetailList() {
-  const formik = useFormik({});
   const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState();
   const [isOpen, setIsOpen] = useState(false);
   const uuid = searchParams.get("uuid");
+  const [isShowModal, setIsShowModal] = useState(false);
   const {
-    isShowModal,
-    setIsShowModal,
     lastDataModificationTimestamp,
     setLastDataModificationTimestamp,
     setToastInfo,
     setIsShowToast,
   } = useApplicationStoreContext();
+  const [total, setTotal] = useState(0);
   const tableHeaders = [
     {
       name: "No",
@@ -119,10 +111,8 @@ export default function DetailList() {
           <button
             className="btn btn-sm btn-danger"
             onClick={() => {
-              formik.setFieldValue(
-                "detail",
-                formik.values.detail.filter((_, index) => index !== data.index)
-              );
+              setSelected(data);
+              setIsShowModal(true);
             }}
             style={{
               fontSize: "10px",
@@ -134,6 +124,64 @@ export default function DetailList() {
       ),
     },
   ];
+
+  const deleteData = () => {
+    DeleteBargingDetail(selected.uuid)
+      .then(() => {
+        setToastInfo({
+          message: "Barging successfully deleted",
+          background: "success",
+        });
+        setIsShowToast(true);
+        setIsShowModal(false);
+
+        setLastDataModificationTimestamp(new Date().getTime());
+      })
+      .catch((err) => {
+        setToastInfo({
+          message:
+            err.response.status === 403
+              ? err.response?.data?.message
+              : "Barging failed deleted",
+          background: "danger",
+        });
+        setIsShowToast(true);
+      });
+  };
+
+  const component = () => {
+    return (
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Delete Barging</h5>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          />
+        </div>
+        <div className="modal-body">Are you sure delete this Barging?</div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setIsShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => deleteData()}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="card">
       <div className="card-body">
@@ -141,7 +189,7 @@ export default function DetailList() {
           <h5 className="card-title fw-bold">Barging Detail List</h5>
           <div>
             <button
-              className="btn btn-danger"
+              className="btn btn-danger btn-sm"
               onClick={() => {
                 setSearchParams();
               }}
@@ -150,7 +198,6 @@ export default function DetailList() {
             </button>
           </div>
         </div>
-
         <DataTable
           api={PagedSearchBargingDetail}
           tableHeader={tableHeaders}
@@ -167,13 +214,31 @@ export default function DetailList() {
             setSelected();
             setIsOpen(true);
           }}
+          callback={(response) => {
+            setTotal(
+              response.data.data.reduce(
+                (sum, item) => sum + Number(item.cargo),
+                0
+              )
+            );
+          }}
         />
+        <Row>
+          <Col md={5}>
+            <Input type="number" label="Total" disabled={true} value={total} />
+          </Col>
+        </Row>
       </div>
       <FormDetail
         isOpen={isOpen}
         setSelected={setSelected}
         toggle={setIsOpen}
         selected={selected}
+      />
+      <ModalPopUp
+        component={component}
+        isOpen={isShowModal}
+        setIsOpen={setIsShowModal}
       />
     </div>
   );
