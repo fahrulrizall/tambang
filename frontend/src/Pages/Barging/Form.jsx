@@ -308,6 +308,19 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     },
     {
       name: "barge",
+      view: (data) => (
+        <Input
+          type="text"
+          name="barge"
+          useLabel={false}
+          value={data.barge}
+          onChange={(e) => {
+            const prev = [...formik.values.detail];
+            prev[data.index].barge = e.target.value;
+            formik.setFieldValue("detail", prev);
+          }}
+        />
+      ),
     },
     {
       name: "cargo",
@@ -456,6 +469,17 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             errorMessage={formik.errors?.company}
             isError={formik.errors.company && formik.touched.company}
             options={options}
+          />
+
+          <Input
+            label="Total"
+            type="text"
+            name="total"
+            value={formik.values.detail.reduce(
+              (acc, item) => acc + Number(item.cargo),
+              0
+            )}
+            disabled={true}
           />
           <div
             style={{

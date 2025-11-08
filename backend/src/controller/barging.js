@@ -199,6 +199,7 @@ const readBarging = async (req, res) => {
       where: {
         bargingUuid: uuid,
       },
+      order: [["no", "asc"]],
       raw: true,
     });
 

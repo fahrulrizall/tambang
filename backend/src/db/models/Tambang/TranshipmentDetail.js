@@ -2,32 +2,27 @@ const { Model, DataTypes } = require("sequelize");
 const { AuditableField } = require("../../../constant");
 const sequelizeConnection = require("../../../config/database-connection");
 
-class BargingDetail extends Model {
+class TranshipmentDetail extends Model {
   static associate(models) {}
 }
 
-BargingDetail.init(
+TranshipmentDetail.init(
   {
     uuid: {
       type: DataTypes.UUID,
       primaryKey: true,
     },
-    bargingUuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
+    transhipmentUuid: {
+      type: DataTypes.UUID(),
     },
     tugBoatUuid: {
-      type: DataTypes.UUID,
-      primaryKey: true,
+      type: DataTypes.UUID(),
     },
     no: {
       type: DataTypes.NUMBER(),
       autoIncrement: true,
       allowNull: false,
       unique: true,
-    },
-    cargo: {
-      type: DataTypes.FLOAT(),
     },
     barge: {
       type: DataTypes.STRING(),
@@ -58,9 +53,9 @@ BargingDetail.init(
   {
     timestamps: false,
     sequelize: sequelizeConnection,
-    modelName: "bargingdetail",
-    tableName: "bargingdetail",
+    modelName: "transhipmentdetail",
+    tableName: "transhipmentdetail",
   }
 );
 
-module.exports = BargingDetail;
+module.exports = TranshipmentDetail;

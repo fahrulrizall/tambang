@@ -2,8 +2,7 @@ const { validationResult } = require("express-validator");
 const {
   Transhipment,
   VwTranshipment,
-  VwBargingDetail,
-  BargingDetail,
+  TranshipmentDetail,
 } = require("../db/models");
 const sequelize = require("sequelize");
 const { ApiError } = require("../Helper/Error.js");
@@ -72,23 +71,21 @@ const createNewTranshipment = async (req, res) => {
   const transaction = await sequelizeConnection.transaction();
 
   try {
-    await Transhipment.create({
-      ...request,
-      createdBy: decodeToken(req, "uuid"),
-      createdDateTime: moment(new Date().toUTCString()).format(
-        "YYYY-MM-DD HH:mm:ss"
-      ),
-    });
-
-    await BargingDetail.destroy({
-      where: { bargingUuid: request.bargingUuid },
-      transaction,
-    });
+    await Transhipment.create(
+      {
+        ...request,
+        createdBy: decodeToken(req, "uuid"),
+        createdDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      { transaction }
+    );
 
     const details = request.detail.map((item) => ({
       ...item,
       uuid: uuidv4(),
-      bargingUuid: request.bargingUuid,
+      transhipmentUuid: request.uuid,
       createdBy: decodeToken(req, "uuid"),
       createdDateTime: moment(new Date().toUTCString()).format(
         "YYYY-MM-DD HH:mm:ss"
@@ -96,7 +93,7 @@ const createNewTranshipment = async (req, res) => {
     }));
 
     if (details.length > 0) {
-      await BargingDetail.bulkCreate(details, { transaction });
+      await TranshipmentDetail.bulkCreate(details, { transaction });
     }
 
     await transaction.commit();
@@ -123,7 +120,6 @@ const updateTranshipment = async (req, res) => {
   const transaction = await sequelizeConnection.transaction();
 
   try {
-    console.log(request);
     await Transhipment.update(
       {
         ...request,
@@ -140,15 +136,15 @@ const updateTranshipment = async (req, res) => {
       }
     );
 
-    await BargingDetail.destroy({
-      where: { bargingUuid: request.bargingUuid },
+    await TranshipmentDetail.destroy({
+      where: { transhipmentUuid: request.transhipmentUuid },
       transaction,
     });
 
     const details = request.detail.map((item) => ({
       ...item,
       uuid: uuidv4(),
-      bargingUuid: request.bargingUuid,
+      transhipmentUuid: request.transhipmentUuid,
       createdBy: decodeToken(req, "uuid"),
       createdDateTime: moment(new Date().toUTCString()).format(
         "YYYY-MM-DD HH:mm:ss"
@@ -156,7 +152,7 @@ const updateTranshipment = async (req, res) => {
     }));
 
     if (details.length > 0) {
-      await BargingDetail.bulkCreate(details, { transaction });
+      await TranshipmentDetail.bulkCreate(details, { transaction });
     }
 
     await transaction.commit();
@@ -173,11 +169,30 @@ const deleteTranshipment = async (req, res) => {
   const { uuid } = req.params;
 
   try {
-    await Transhipment.destroy({
-      where: {
-        uuid,
+    const transaction = await sequelizeConnection.transaction();
+
+    await Transhipment.destroy(
+      {
+        where: {
+          uuid,
+        },
       },
-    });
+      {
+        transaction,
+      }
+    );
+
+    await TranshipmentDetail.destroy(
+      {
+        where: {
+          transhipmentUuid: uuid,
+        },
+      },
+      { transaction }
+    );
+
+    await transaction.commit();
+
     res.json({
       uuid,
     });
@@ -197,9 +212,9 @@ const readTranshipment = async (req, res) => {
       raw: true,
     });
 
-    const detail = await VwBargingDetail.findAll({
+    const detail = await TranshipmentDetail.findAll({
       where: {
-        bargingUuid: result.bargingUuid,
+        transhipmentUuid: uuid,
       },
       raw: true,
     });

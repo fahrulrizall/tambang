@@ -3,7 +3,6 @@ import React, { useState } from "react";
 const CopySummaryButton = ({ data }) => {
   const [copied, setCopied] = useState(false);
 
-  console.log(data);
   const total = data.detail.reduce((acc, item) => acc + item.cargoOnb, 0);
 
   const cargoPerBargeText = `Cargo per Barge :
