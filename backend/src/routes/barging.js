@@ -23,20 +23,40 @@ BargingRoutes.post(
   CheckUserRole(allRole),
   BargingController.createNewBarging
 );
+BargingRoutes.post(
+  "/detail",
+  CheckUserRole(allRole),
+  BargingController.createNewBargingDetail
+);
 BargingRoutes.patch(
   "/:uuid",
   CheckUserRole(allRole),
   BargingController.updateBarging
+);
+BargingRoutes.patch(
+  "/detail/:uuid",
+  CheckUserRole(allRole),
+  BargingController.updateBargingDetail
 );
 BargingRoutes.delete(
   "/:uuid",
   CheckUserRole(allRole),
   BargingController.deleteBarging
 );
+BargingRoutes.delete(
+  "/detail/:uuid",
+  CheckUserRole(allRole),
+  BargingController.deleteBargingDetail
+);
 BargingRoutes.get(
   "/:uuid",
   CheckUserRole(allRole),
   BargingController.readBarging
+);
+BargingRoutes.get(
+  "/detail/:uuid",
+  CheckUserRole(allRole),
+  BargingController.readBargingDetail
 );
 
 module.exports = BargingRoutes;

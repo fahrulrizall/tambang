@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
-  ReadBarging,
-  CreateBarging,
-  UpdateBarging,
+  CreateBargingDetail,
+  UpdateBargingDetail,
   PagedSearchTugBoat,
+  ReadBargingDetail,
 } from "../../API";
 import { Input } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
@@ -11,11 +11,13 @@ import { useFormik } from "formik";
 import { Action } from "../../Constant";
 import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
 import moment from "moment";
+import { useSearchParams } from "react-router-dom";
 
 export default function TugBoatForm({ isOpen, toggle, selected }) {
   const { setLastDataModificationTimestamp, setToastInfo, setIsShowToast } =
     useApplicationStoreContext();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bargingUuid = searchParams.get("uuid");
   const uuid = selected?.uuid;
   const [action, setAction] = useState(Action.CREATE);
 
@@ -24,10 +26,8 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     initialValues: {
       uuid: "",
       no: "",
-      date: moment().format("yyyy-MM-DD"),
       company: "",
       mv: "",
-      detail: [],
       createdDateTime: null,
       createdBy: null,
       lastModifiedDateTime: null,
@@ -36,15 +36,11 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     onSubmit: (values) => {
       const model = {
         ...values,
-        company: values.company?.value,
-        detail: values.detail.map((item) => ({
-          ...item,
-          bargingUuid: values.uuid,
-          tugBoatUuid: item.tugBoat?.value,
-        })),
+        bargingUuid: bargingUuid,
+        tugBoatUuid: values.tugBoat?.value,
       };
       if (action === Action.CREATE) {
-        CreateBarging(model)
+        CreateBargingDetail(model)
           .then((response) => {
             setToastInfo({
               message: "Barging successfully created",
@@ -65,7 +61,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             setIsShowToast(true);
           });
       } else {
-        UpdateBarging(uuid, model)
+        UpdateBargingDetail(uuid, model)
           .then((response) => {
             setToastInfo({
               message: "Barging successfully update",
@@ -89,49 +85,29 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     },
   });
 
-  const options = [
-    {
-      value: "KJB",
-      label: "PT. KALTIM JAYA BARA",
-    },
-    {
-      value: "HAA",
-      label: "PT. HAMPARAN ANUGRAH ABADI",
-    },
-  ];
-
   useEffect(() => {
     if (uuid && isOpen) {
       setAction(Action.VIEW);
-      ReadBarging(uuid)
+      ReadBargingDetail(uuid)
         .then((response) =>
           formik.setValues({
             ...response.data,
-            date: moment(response.data.date).format("yyyy-MM-DD"),
-            company: {
-              value: response.data.company,
-              label: options.find((a) => a.value == response.data.company)
-                .label,
+            tugBoat: {
+              value: response.data.tugBoatUuid,
+              label: response.data.name,
             },
-            detail: response.data.detail.map((item) => ({
-              ...item,
-              tugBoat: {
-                value: item.tugBoatUuid,
-                label: item.name,
-              },
-              arrivedatJetty:
-                item.arrivedatJetty &&
-                moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
-              commanced:
-                item.commanced &&
-                moment(item.commanced).format("yyyy-MM-DD HH:mm"),
-              completed:
-                item.completed &&
-                moment(item.completed).format("yyyy-MM-DD HH:mm"),
-              castedOff:
-                item.castedOff &&
-                moment(item.castedOff).format("yyyy-MM-DD HH:mm"),
-            })),
+            arrivedatJetty:
+              response.data.arrivedatJetty &&
+              moment(response.data.arrivedatJetty).format("yyyy-MM-DDTHH:mm"),
+            commanced:
+              response.data.commanced &&
+              moment(response.data.commanced).format("yyyy-MM-DDTHH:mm"),
+            completed:
+              response.data.completed &&
+              moment(response.data.completed).format("yyyy-MM-DDTHH:mm"),
+            castedOff:
+              response.data.castedOff &&
+              moment(response.data.castedOff).format("yyyy-MM-DDTHH:mm"),
           })
         )
         .catch((err) => console.log(err));
@@ -197,7 +173,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
           <Input
             label="Arrived at Jetty"
-            type="date"
+            type="datetime-local"
             name="arrivedatJetty"
             onChange={formik.handleChange}
             value={formik.values.arrivedatJetty}
@@ -209,7 +185,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
           <Input
             label="Commanced"
-            type="date"
+            type="datetime-local"
             name="commanced"
             onChange={formik.handleChange}
             value={formik.values.commanced}
@@ -219,7 +195,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
           <Input
             label="Completed"
-            type="date"
+            type="datetime-local"
             name="completed"
             onChange={formik.handleChange}
             value={formik.values.completed}
@@ -229,7 +205,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
           <Input
             label="Casted Off"
-            type="date"
+            type="datetime-local"
             name="castedOff"
             onChange={formik.handleChange}
             value={formik.values.castedOff}

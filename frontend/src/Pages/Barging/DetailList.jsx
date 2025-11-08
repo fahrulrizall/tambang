@@ -158,8 +158,8 @@ export default function DetailList() {
           isSearch={true}
           dependencies={[lastDataModificationTimestamp, uuid]}
           params={{
-            orderByFieldName: "CreatedDateTime",
-            sortOrder: "desc",
+            orderByFieldName: "no",
+            sortOrder: "asc",
             bargingUuid: uuid,
           }}
           isAdd={true}
@@ -173,6 +173,7 @@ export default function DetailList() {
         isOpen={isOpen}
         setSelected={setSelected}
         toggle={setIsOpen}
+        selected={selected}
       />
     </div>
   );
