@@ -98,7 +98,7 @@ const CopySummaryButton = ({ data, header }) => {
       onClick={handleCopy}
       className={`btn btn-${copied ? "success" : "primary"}`}
     >
-      {copied ? "✅ SUMMARY Tersalin!" : "📋 Copy SUMMARY"}
+      {copied ? "Summary Tersalin!" : "Copy Summary"}
     </button>
   );
 };

@@ -255,153 +255,159 @@ export default function DetailList({ selected: headerSelected }) {
             </Row>
           </Tab>
           <Tab eventKey="profile" title="Summarize">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold">SUMMARY</h5>
-              <CopySummaryButton data={data} header={headerSelected} />
-            </div>
+            <div className="row">
+              <div className="col-md-8">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="fw-bold">SUMMARY</h5>
+                  <CopySummaryButton data={data} header={headerSelected} />
+                </div>
+                <div>
+                  <div class="section-title">
+                    Discharge, {headerSelected.dischargingPort}
+                  </div>
+                  <table class="table table-borderless summary-table">
+                    <tbody>
+                      <tr>
+                        <td>Stowage Plan :</td>
+                        <td>{headerSelected.stowagePlan}</td>
+                      </tr>
+                      <tr>
+                        <td>NOR Tendered :</td>
+                        <td>{headerSelected.norTendered}</td>
+                      </tr>
+                      <tr>
+                        <td>Previous Cargo :</td>
+                        <td>-</td>
+                      </tr>
+                      <tr>
+                        <td>Cargo Onboard :</td>
+                        <td>
+                          {data.reduce((acc, item) => acc + item.cargoOnb, 0)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Balance Cargo :</td>
+                        <td>
+                          {headerSelected.stowagePlan -
+                            data.reduce((acc, item) => acc + item.cargoOnb, 0)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Loading Rate DTD :</td>
+                        <td>-</td>
+                      </tr>
+                      <tr>
+                        <td>Loading Rate PTD :</td>
+                        <td>
+                          {(data.reduce((acc, item) => acc + item.cargoOnb, 0) *
+                            24) /
+                            12}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>TPH :</td>
+                        <td>982</td>
+                      </tr>
+                      <tr>
+                        <td>Commenced Loading :</td>
+                        <td>211025 19:00</td>
+                      </tr>
+                      <tr>
+                        <td>Est Completed Loading :</td>
+                        <td>261025 19:00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
-            <div>
-              <div class="section-title">Discharge, Muara Pantai</div>
-              <table class="table table-borderless summary-table">
-                <tbody>
-                  <tr>
-                    <td>Stowage Plan :</td>
-                    <td>86,900</td>
-                  </tr>
-                  <tr>
-                    <td>NOR Tendered :</td>
-                    <td>211025 15:05</td>
-                  </tr>
-                  <tr>
-                    <td>Previous Cargo :</td>
-                    <td>-</td>
-                  </tr>
-                  <tr>
-                    <td>Cargo Onboard :</td>
-                    <td>23,561.026</td>
-                  </tr>
-                  <tr>
-                    <td>Balance Cargo :</td>
-                    <td>63,338.974</td>
-                  </tr>
-                  <tr>
-                    <td>Loading Rate DTD :</td>
-                    <td>-</td>
-                  </tr>
-                  <tr>
-                    <td>Loading Rate PTD :</td>
-                    <td>47,122.05</td>
-                  </tr>
-                  <tr>
-                    <td>TPH :</td>
-                    <td>982</td>
-                  </tr>
-                  <tr>
-                    <td>Commenced Loading :</td>
-                    <td>211025 19:00</td>
-                  </tr>
-                  <tr>
-                    <td>Est Completed Loading :</td>
-                    <td>261025 19:00</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <div>
+                  <div class="section-title">Remarks :</div>
+                  <table class="table table-bordered table-sm align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Description</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Nett</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Heavy Rain</td>
+                        <td>201025 19:45</td>
+                        <td>201025 20:45</td>
+                        <td>00:01:00</td>
+                      </tr>
+                      <tr>
+                        <td>Waiting Barge</td>
+                        <td>201025 23:45</td>
+                        <td>211025 08:45</td>
+                        <td>00:09:00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
-            <div>
-              <div class="section-title">Remarks :</div>
-              <table class="table table-bordered table-sm align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th>Description</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Nett</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Heavy Rain</td>
-                    <td>201025 19:45</td>
-                    <td>201025 20:45</td>
-                    <td>00:01:00</td>
-                  </tr>
-                  <tr>
-                    <td>Waiting Barge</td>
-                    <td>201025 23:45</td>
-                    <td>211025 08:45</td>
-                    <td>00:09:00</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <div>
+                  <div class="section-title">Cargo per Barge :</div>
+                  <table class="table table-borderless table-sm">
+                    <tbody>
+                      {data.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.cargoOnb}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
 
-            <div>
-              <div class="section-title">Cargo per Barge :</div>
-              <table class="table table-borderless table-sm">
-                <tbody>
-                  <tr>
-                    <td>BG Prima Sakti 18</td>
-                    <td>5,890.256</td>
-                  </tr>
-                  <tr>
-                    <td>BG Prima Sakti 19</td>
-                    <td>5,890.257</td>
-                  </tr>
-                  <tr>
-                    <td>BG Prima Sakti 20</td>
-                    <td>5,890.257</td>
-                  </tr>
-                  <tr>
-                    <td>BG Prima Sakti 18</td>
-                    <td>5,890.256</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                <div class="section-title">Cargo per Hold :</div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <p>
+                      <strong>H1</strong>
+                      <br />
+                      KJB : <br />
+                      HAA : <br />
+                      Total :{" "}
+                    </p>
+                  </div>
+                </div>
 
-            <div class="section-title">Cargo per Hold :</div>
-            <div class="row">
-              <div class="col-md-4">
-                <p>
-                  <strong>H1</strong>
-                  <br />
-                  KJB : <br />
-                  HAA : <br />
-                  Total :{" "}
-                </p>
+                <div>
+                  <div class="section-title">Update Barge :</div>
+                  <table class="table table-bordered table-sm align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>No</th>
+                        <th>Tug Boat</th>
+                        <th>Barge</th>
+                        <th>Cargo</th>
+                        <th>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>5</td>
+                        <td>TB Prima Star 64</td>
+                        <td>BG Prima Sakti 22</td>
+                        <td>5,890.260</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>6</td>
+                        <td>TB Prima Star 65</td>
+                        <td>BG Prima Sakti 23</td>
+                        <td>5,890.261</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-
-            <div>
-              <div class="section-title">Update Barge :</div>
-              <table class="table table-bordered table-sm align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th>No</th>
-                    <th>Tug Boat</th>
-                    <th>Barge</th>
-                    <th>Cargo</th>
-                    <th>Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>5</td>
-                    <td>TB Prima Star 64</td>
-                    <td>BG Prima Sakti 22</td>
-                    <td>5,890.260</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>6</td>
-                    <td>TB Prima Star 65</td>
-                    <td>BG Prima Sakti 23</td>
-                    <td>5,890.261</td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </Tab>
         </Tabs>
