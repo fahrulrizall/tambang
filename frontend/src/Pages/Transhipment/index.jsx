@@ -91,7 +91,7 @@ export default function PlantTable() {
     },
     {
       name: "blending",
-      view: (data) => data.blending?.toString(),
+      view: (data) => (data.blending ? "Yes" : "No"),
     },
     {
       view: (data) => (

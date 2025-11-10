@@ -73,22 +73,22 @@ export default function DetailList() {
       name: "arrivedatJetty",
       view: (data) =>
         data.arrivedatJetty &&
-        moment(data.arrivedatJetty).format("DD/MMM/yyyy HH:mm"),
+        moment(data.arrivedatJetty).format("DD-MM-yyyy HH:mm"),
     },
     {
       name: "commanced",
       view: (data) =>
-        data.commanced && moment(data.commanced).format("DD/MMM/yyyy HH:mm"),
+        data.commanced && moment(data.commanced).format("DD-MM-yyyy HH:mm"),
     },
     {
       name: "completed",
       view: (data) =>
-        data.completed && moment(data.completed).format("DD/MMM/yyyy HH:mm"),
+        data.completed && moment(data.completed).format("DD-MM-yyyy HH:mm"),
     },
     {
       name: "castedOff",
       view: (data) =>
-        data.castedOff && moment(data.castedOff).format("DD/MMM/yyyy HH:mm"),
+        data.castedOff && moment(data.castedOff).format("DD-MM-yyyy HH:mm"),
     },
     {
       name: "remarks",

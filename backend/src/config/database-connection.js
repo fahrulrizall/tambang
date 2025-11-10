@@ -10,6 +10,11 @@ const sequelizeConnection = new Sequelize(dbName, dbUsername, dbPassword, {
   host: dbHost,
   port: 3306,
   dialect: dbDialect,
+  timezone: "+00:00", // Force Sequelize to use UTC
+  dialectOptions: {
+    useUTC: true, // For reading from the database
+    // dateStrings: true, // Return DATETIME as string, not JS Date (optional)
+  },
 });
 
 module.exports = sequelizeConnection;

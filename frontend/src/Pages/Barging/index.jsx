@@ -50,7 +50,7 @@ export default function PlantTable() {
     },
     {
       name: "date",
-      view: (data) => moment(data.date).format("DD/MMM/YYYY"),
+      view: (data) => moment(data.date).format("DD-MM-YYYY"),
     },
     {
       name: "mv",
