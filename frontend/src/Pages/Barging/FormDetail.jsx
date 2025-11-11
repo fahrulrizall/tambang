@@ -10,8 +10,8 @@ import { useApplicationStoreContext } from "../../Hook/UserHook";
 import { useFormik } from "formik";
 import { Action } from "../../Constant";
 import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
-import moment from "moment";
 import { useSearchParams } from "react-router-dom";
+import { convertUtc } from "../../helpers";
 
 export default function TugBoatForm({ isOpen, toggle, selected }) {
   const { setLastDataModificationTimestamp, setToastInfo, setIsShowToast } =
@@ -96,18 +96,10 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               value: response.data.tugBoatUuid,
               label: response.data.name,
             },
-            arrivedatJetty:
-              response.data.arrivedatJetty &&
-              moment(response.data.arrivedatJetty).format("yyyy-MM-DDTHH:mm"),
-            commanced:
-              response.data.commanced &&
-              moment(response.data.commanced).format("yyyy-MM-DDTHH:mm"),
-            completed:
-              response.data.completed &&
-              moment(response.data.completed).format("yyyy-MM-DDTHH:mm"),
-            castedOff:
-              response.data.castedOff &&
-              moment(response.data.castedOff).format("yyyy-MM-DDTHH:mm"),
+            arrivedatJetty: convertUtc(response.data.arrivedatJetty),
+            commanced: convertUtc(response.data.commanced),
+            completed: convertUtc(response.data.completed),
+            castedOff: convertUtc(response.data.castedOff),
           })
         )
         .catch((err) => console.log(err));

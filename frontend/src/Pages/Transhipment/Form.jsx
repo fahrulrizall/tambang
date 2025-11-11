@@ -13,6 +13,7 @@ import { useFormik } from "formik";
 import { Action } from "../../Constant";
 import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
 import moment from "moment";
+import { convertUtc } from "../../helpers";
 
 export default function TugBoatForm({ isOpen, toggle, selected }) {
   const {
@@ -133,9 +134,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
         .then((response) =>
           formik.setValues({
             ...response.data,
-            norTendered:
-              response.data.norTendered &&
-              moment(response.data.norTendered).format("yyyy-MM-DD HH:mm"),
+            norTendered: convertUtc(response.data.norTendered),
             vessel: {
               value: response.data.bargingUuid,
               label: response.data.no,
@@ -203,21 +202,11 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               const detail = bargingDetail.data.detail.map((item) => ({
                 ...item,
                 tugBoat: item.name,
-                arrivedatJetty:
-                  item.arrivedatJetty &&
-                  moment(item.arrivedatJetty).format("yyyy-MM-DD HH:mm"),
-                alongside:
-                  item.alongside &&
-                  moment(item.alongside).format("yyyy-MM-DD HH:mm"),
-                commanced:
-                  item.commanced &&
-                  moment(item.commanced).format("yyyy-MM-DD HH:mm"),
-                completed:
-                  item.completed &&
-                  moment(item.completed).format("yyyy-MM-DD HH:mm"),
-                castedOff:
-                  item.castedOff &&
-                  moment(item.castedOff).format("yyyy-MM-DD HH:mm"),
+                arrivedatJetty: convertUtc(item.arrivedatJetty),
+                alongside: convertUtc(item.alongside),
+                commanced: convertUtc(item.commanced),
+                completed: convertUtc(item.completed),
+                castedOff: convertUtc(item.castedOff),
               }));
 
               formik.setFieldValue("detail", detail);

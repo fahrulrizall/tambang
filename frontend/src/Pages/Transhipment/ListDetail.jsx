@@ -12,10 +12,10 @@ import {
   DeleteTranshipmentDetail,
 } from "../../API";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
-import moment from "moment";
 import FormDetail from "./FormDetail";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import { convertUtc } from "../../helpers";
 
 export default function DetailList({ selected: headerSelected }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,29 +77,23 @@ export default function DetailList({ selected: headerSelected }) {
     },
     {
       name: "arrivedatJetty",
-      view: (data) =>
-        data.arrivedatJetty &&
-        moment(data.arrivedatJetty).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.arrivedatJetty),
     },
     {
       name: "alongside",
-      view: (data) =>
-        data.alongside && moment(data.alongside).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.alongside),
     },
     {
       name: "commanced",
-      view: (data) =>
-        data.commanced && moment(data.commanced).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.commanced),
     },
     {
       name: "completed",
-      view: (data) =>
-        data.completed && moment(data.completed).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.completed),
     },
     {
       name: "castedOff",
-      view: (data) =>
-        data.castedOff && moment(data.castedOff).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.castedOff),
     },
     {
       name: "cargoOnb",

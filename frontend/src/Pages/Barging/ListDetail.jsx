@@ -4,8 +4,8 @@ import { DataTable, Input, ModalPopUp } from "../../Components";
 import { useSearchParams } from "react-router-dom";
 import { PagedSearchBargingDetail, DeleteBargingDetail } from "../../API";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
-import moment from "moment";
 import FormDetail from "./FormDetail";
+import { convertUtc } from "../../helpers";
 
 export default function DetailList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -71,24 +71,19 @@ export default function DetailList() {
     },
     {
       name: "arrivedatJetty",
-      view: (data) =>
-        data.arrivedatJetty &&
-        moment(data.arrivedatJetty).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.arrivedatJetty),
     },
     {
       name: "commanced",
-      view: (data) =>
-        data.commanced && moment(data.commanced).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.commanced),
     },
     {
       name: "completed",
-      view: (data) =>
-        data.completed && moment(data.completed).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.completed),
     },
     {
       name: "castedOff",
-      view: (data) =>
-        data.castedOff && moment(data.castedOff).format("DD-MM-yyyy HH:mm"),
+      view: (data) => convertUtc(data.castedOff),
     },
     {
       name: "remarks",
