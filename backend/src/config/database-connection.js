@@ -13,7 +13,7 @@ const sequelizeConnection = new Sequelize(dbName, dbUsername, dbPassword, {
   timezone: "+00:00", // Force Sequelize to use UTC
   dialectOptions: {
     useUTC: true, // For reading from the database
-    // dateStrings: true, // Return DATETIME as string, not JS Date (optional)
+    dateStrings: true, // Return DATETIME as string, not JS Date (optional)
   },
 });
 
