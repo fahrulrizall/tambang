@@ -99,6 +99,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               label: response.data.name,
             },
             arrivedatJetty: convertUtc(response.data.arrivedatJetty),
+            alongside: convertUtc(response.data.alongside),
             commanced: convertUtc(response.data.commanced),
             completed: convertUtc(response.data.completed),
             castedOff: convertUtc(response.data.castedOff),
