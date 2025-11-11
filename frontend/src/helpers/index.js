@@ -7,4 +7,11 @@ function convertUtc(params) {
   return moment.utc(params).add(7, "hours").format("yyyy-MM-DDTHH:mm");
 }
 
-export { convertUtc };
+function convertUtcUser(params) {
+  if (!params) {
+    return;
+  }
+  return moment.utc(params).add(7, "hours").format("DD-MM-YYYY HH:mm");
+}
+
+export { convertUtc, convertUtcUser };

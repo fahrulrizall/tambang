@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { PagedSearchBargingDetail, DeleteBargingDetail } from "../../API";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import FormDetail from "./FormDetail";
-import { convertUtc } from "../../helpers";
+import { convertUtc, convertUtcUser } from "../../helpers";
 
 export default function DetailList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -71,19 +71,19 @@ export default function DetailList() {
     },
     {
       name: "arrivedatJetty",
-      view: (data) => convertUtc(data.arrivedatJetty),
+      view: (data) => convertUtcUser(data.arrivedatJetty),
     },
     {
       name: "commanced",
-      view: (data) => convertUtc(data.commanced),
+      view: (data) => convertUtcUser(data.commanced),
     },
     {
       name: "completed",
-      view: (data) => convertUtc(data.completed),
+      view: (data) => convertUtcUser(data.completed),
     },
     {
       name: "castedOff",
-      view: (data) => convertUtc(data.castedOff),
+      view: (data) => convertUtcUser(data.castedOff),
     },
     {
       name: "remarks",

@@ -15,7 +15,7 @@ import { useApplicationStoreContext } from "../../Hook/UserHook";
 import FormDetail from "./FormDetail";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-import { convertUtc } from "../../helpers";
+import { convertUtcUser } from "../../helpers";
 
 export default function DetailList({ selected: headerSelected }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,23 +77,23 @@ export default function DetailList({ selected: headerSelected }) {
     },
     {
       name: "arrivedatJetty",
-      view: (data) => convertUtc(data.arrivedatJetty),
+      view: (data) => convertUtcUser(data.arrivedatJetty),
     },
     {
       name: "alongside",
-      view: (data) => convertUtc(data.alongside),
+      view: (data) => convertUtcUser(data.alongside),
     },
     {
       name: "commanced",
-      view: (data) => convertUtc(data.commanced),
+      view: (data) => convertUtcUser(data.commanced),
     },
     {
       name: "completed",
-      view: (data) => convertUtc(data.completed),
+      view: (data) => convertUtcUser(data.completed),
     },
     {
       name: "castedOff",
-      view: (data) => convertUtc(data.castedOff),
+      view: (data) => convertUtcUser(data.castedOff),
     },
     {
       name: "cargoOnb",
