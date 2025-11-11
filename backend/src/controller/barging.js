@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const { decodeToken } = require("../utils/index.js");
 const moment = require("moment");
 const sequelizeConnection = require("../config/database-connection.js");
+const { QueryTypes } = require("sequelize");
 
 const pagedSearcBarging = async (req, res) => {
   const errros = validationResult(req);
@@ -50,6 +51,64 @@ const pagedSearcBarging = async (req, res) => {
     });
   } catch (error) {
     ApiError(res, error);
+  }
+};
+
+const groupedBarging = async (req, res) => {
+  try {
+    const page = parseInt(req.query.pageIndex) || 1;
+    const limit = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * limit;
+
+    // ✅ Main grouped query
+    const results = await sequelizeConnection.query(
+      `
+      SELECT 
+        MAX(uuid) AS uuid,
+        no,
+      MAX(mv) as mv,
+        MAX(date) AS date,
+        MAX(createdDateTime) AS createdAt
+      FROM barging
+      GROUP BY no
+      ORDER BY MAX(createdDateTime) DESC
+      LIMIT :limit OFFSET :offset
+      `,
+      {
+        replacements: { limit, offset },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    // ✅ Count total grouped rows for pagination
+    const totalResult = await sequelizeConnection.query(
+      `
+      SELECT COUNT(*) AS total
+      FROM (
+        SELECT no
+        FROM barging
+        GROUP BY no
+      ) AS grouped
+      `,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    const total = totalResult[0].total;
+
+    res.json({
+      data: results,
+      totalCount: total,
+      pageIndex: page,
+      pageSize: limit,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error fetching barging data",
+      error: error.message,
+    });
   }
 };
 
@@ -124,18 +183,6 @@ const createNewBarging = async (req, res) => {
       },
       { transaction }
     );
-
-    // if (Array.isArray(request.detail) && request.detail.length > 0) {
-    //   const details = request.detail.map((item) => ({
-    //     ...item,
-    //     uuid: uuidv4(),
-    //     bargingUuid: request.uuid,
-    //     createdBy: decodeToken(req, "uuid"),
-    //     createdDateTime: moment.utc().format("YYYY-MM-DD HH:mm:ss"),
-    //   }));
-
-    //   await BargingDetail.bulkCreate(details, { transaction });
-    // }
 
     await transaction.commit();
 
@@ -357,4 +404,5 @@ module.exports = {
   deleteBargingDetail,
   readBarging,
   readBargingDetail,
+  groupedBarging,
 };

@@ -13,6 +13,12 @@ BargingRoutes.get(
   BargingController.pagedSearcBarging
 );
 BargingRoutes.get(
+  "/list/group",
+  CheckUserRole(allRole),
+  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
+  BargingController.groupedBarging
+);
+BargingRoutes.get(
   "/list/detail/:bargingUuid",
   CheckUserRole(allRole),
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],

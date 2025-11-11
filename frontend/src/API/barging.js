@@ -20,6 +20,23 @@ const PagedSearchBarging = (data) => {
   });
 };
 
+const PagedSearchBargingGroup = (data) => {
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
+  return _Get(`${process.env.REACT_APP_API_URL}/${endpoint}/list/group`, {
+    params: {
+      ...data,
+    },
+    ..._options,
+  });
+};
+
 const PagedSearchBargingDetail = (data) => {
   let accessToken = Cookies.get("accessToken");
   let _options = {
@@ -169,4 +186,5 @@ export {
   DeleteBargingDetail,
   ReadBarging,
   ReadBargingDetail,
+  PagedSearchBargingGroup,
 };

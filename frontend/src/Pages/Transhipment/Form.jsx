@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   UpdateTranshipment,
   ReadTranshipment,
-  PagedSearchBarging,
+  PagedSearchBargingGroup,
   ReadBarging,
   CreateTranshipment,
   DeleteTranshipment,
@@ -225,7 +225,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             value={formik.values.vessel}
             errorMessage={formik.errors?.vessel}
             isError={formik.errors.vessel && formik.touched.vessel}
-            api={PagedSearchBarging}
+            api={PagedSearchBargingGroup}
             handleSetOptions={(item) => ({
               company: item.company,
               value: item.uuid,
