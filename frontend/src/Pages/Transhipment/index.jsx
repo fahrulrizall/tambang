@@ -252,6 +252,11 @@ export default function PlantTable() {
                     setSelected();
                     setIsOpen(true);
                   }}
+                  activeClassName={(item) => {
+                    if (item.uuid == uuid) {
+                      return "active";
+                    }
+                  }}
                 />
               </div>
             </div>

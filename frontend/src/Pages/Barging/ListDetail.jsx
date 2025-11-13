@@ -220,6 +220,11 @@ export default function DetailList() {
             setTotal(response.data.totalWeight);
           }}
           usePagination={false}
+          activeClassName={(item) => {
+            if (item.uuid == selected?.uuid) {
+              return "active";
+            }
+          }}
         />
         <Row>
           <Col md={5}>
@@ -230,7 +235,10 @@ export default function DetailList() {
       <FormDetail
         isOpen={isOpen}
         setSelected={setSelected}
-        toggle={setIsOpen}
+        toggle={(val) => {
+          setSelected();
+          setIsOpen(val);
+        }}
         selected={selected}
       />
       <ModalPopUp
