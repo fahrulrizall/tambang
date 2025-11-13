@@ -34,6 +34,9 @@ export default function DetailList() {
       name: "Cargo",
     },
     {
+      name: "Alongside",
+    },
+    {
       name: "Arrived at Jetty",
     },
     {
@@ -68,6 +71,10 @@ export default function DetailList() {
     },
     {
       name: "cargo",
+    },
+    {
+      name: "alongside",
+      view: (data) => convertUtcUser(data.alongside),
     },
     {
       name: "arrivedatJetty",
@@ -210,13 +217,9 @@ export default function DetailList() {
             setIsOpen(true);
           }}
           callback={(response) => {
-            setTotal(
-              response.data.data.reduce(
-                (sum, item) => sum + Number(item.cargo),
-                0
-              )
-            );
+            setTotal(response.data.totalWeight);
           }}
+          usePagination={false}
         />
         <Row>
           <Col md={5}>

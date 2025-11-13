@@ -29,6 +29,9 @@ BargingDetail.init(
     cargo: {
       type: DataTypes.FLOAT(),
     },
+    alongside: {
+      type: DataTypes.DATE(),
+    },
     barge: {
       type: DataTypes.STRING(),
     },

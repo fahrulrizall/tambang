@@ -45,6 +45,9 @@ TranshipmentDetail.init(
     cargoOnb: {
       type: DataTypes.FLOAT(),
     },
+    remarks: {
+      type: DataTypes.STRING(),
+    },
     ...AuditableField,
   },
   {

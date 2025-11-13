@@ -61,6 +61,9 @@ export default function DetailList({ selected: headerSelected }) {
       name: "Cargo Onb",
     },
     {
+      name: "Remarks",
+    },
+    {
       name: "Action",
     },
   ];
@@ -97,6 +100,9 @@ export default function DetailList({ selected: headerSelected }) {
     },
     {
       name: "cargoOnb",
+    },
+    {
+      name: "remarks",
     },
     {
       view: (data) => (
@@ -227,13 +233,9 @@ export default function DetailList({ selected: headerSelected }) {
               }}
               callback={(response) => {
                 setData(response.data.data);
-                setTotal(
-                  response.data.data.reduce(
-                    (sum, item) => sum + Number(item.cargoOnb),
-                    0
-                  )
-                );
+                setTotal(response.data.totalWeight);
               }}
+              usePagination={false}
             />
             <Row>
               <Col md={5}>
@@ -409,6 +411,7 @@ export default function DetailList({ selected: headerSelected }) {
         setSelected={setSelected}
         toggle={setIsOpen}
         selected={selected}
+        nextNo={data?.length + 1}
       />
       <ModalPopUp
         component={component}

@@ -13,7 +13,7 @@ import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { convertUtc } from "../../helpers";
 
-export default function TugBoatForm({ isOpen, toggle, selected }) {
+export default function TugBoatForm({ isOpen, toggle, selected, nextNo }) {
   const { setLastDataModificationTimestamp, setToastInfo, setIsShowToast } =
     useApplicationStoreContext();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -107,6 +107,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
         .catch((err) => console.log(err));
     } else {
       setAction(Action.CREATE);
+      formik.setFieldValue("no", nextNo);
     }
   }, [isOpen, uuid]);
 
@@ -118,7 +119,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
   return (
     <>
       <Modal show={isOpen} onHide={onCloseModal} size="md">
-        <ModalHeader closeButton={true}>Barging Detail</ModalHeader>
+        <ModalHeader closeButton={true}>Discharging Detail</ModalHeader>
         <ModalBody>
           <Input
             label="No"
@@ -219,6 +220,16 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             value={formik.values.cargoOnb}
             errorMessage={formik.errors?.cargoOnb}
             isError={formik.errors.cargoOnb && formik.touched.cargoOnb}
+          />
+
+          <Input
+            label="Remarks"
+            type="text"
+            name="remarks"
+            onChange={formik.handleChange}
+            value={formik.values.remarks}
+            errorMessage={formik.errors?.remarks}
+            isError={formik.errors.remarks && formik.touched.remarks}
           />
         </ModalBody>
         <ModalFooter>

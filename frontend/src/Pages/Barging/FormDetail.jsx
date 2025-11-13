@@ -97,6 +97,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               label: response.data.name,
             },
             arrivedatJetty: convertUtc(response.data.arrivedatJetty),
+            alongside: convertUtc(response.data.alongside),
             commanced: convertUtc(response.data.commanced),
             completed: convertUtc(response.data.completed),
             castedOff: convertUtc(response.data.castedOff),
@@ -161,6 +162,16 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             value={formik.values.cargo}
             errorMessage={formik.errors?.cargo}
             isError={formik.errors.cargo && formik.touched.cargo}
+          />
+
+          <Input
+            label="Alongside"
+            type="datetime-local"
+            name="alongside"
+            onChange={formik.handleChange}
+            value={formik.values.alongside}
+            errorMessage={formik.errors?.alongside}
+            isError={formik.errors.alongside && formik.touched.alongside}
           />
 
           <Input

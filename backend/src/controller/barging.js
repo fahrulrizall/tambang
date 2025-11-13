@@ -136,21 +136,30 @@ const pagedSearcBargingDetail = async (req, res) => {
   try {
     const whereCondition = {
       ...(keyword && {
-        [Op.or]: [{ barge: { [Op.like]: `%${keyword}%` } }],
+        [Op.and]: [
+          sequelize.where(sequelize.fn("LOWER", sequelize.col("name")), {
+            [Op.like]: `%${keyword.toLowerCase()}%`,
+          }),
+        ],
       }),
-      ...(bargingUuid && { bargingUuid: bargingUuid }),
+      ...(bargingUuid && { bargingUuid }),
     };
 
-    const result = await VwBargingDetail.findAndCountAll({
+    const result = await VwBargingDetail.findAll({
       where: whereCondition,
-      limit: parseInt(pageSize),
-      offset: parseInt(pageSize * pageIndex),
+      // limit: parseInt(pageSize),
+      // offset: parseInt(pageSize * pageIndex),
       order: order,
     });
 
+    const totalWeight = await VwBargingDetail.sum("cargo", {
+      where: whereCondition,
+    });
+
     res.json({
-      data: result.rows,
+      data: result,
       totalCount: result.count,
+      totalWeight: totalWeight,
       pageIndex: parseInt(pageIndex),
       pageSize: parseInt(pageSize),
     });

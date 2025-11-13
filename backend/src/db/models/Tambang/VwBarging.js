@@ -29,6 +29,9 @@ VwBargingDetail.init(
     cargo: {
       type: DataTypes.FLOAT(),
     },
+    alongside: {
+      type: DataTypes.DATE(),
+    },
     arrivedatJetty: {
       type: DataTypes.DATE(),
     },

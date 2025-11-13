@@ -48,6 +48,9 @@ VwTranshipmentDetail.init(
     name: {
       type: DataTypes.STRING(),
     },
+    remarks: {
+      type: DataTypes.STRING(),
+    },
     ...AuditableField,
   },
   {

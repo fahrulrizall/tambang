@@ -187,7 +187,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
   return (
     <>
-      <Modal show={isOpen} onHide={onCloseModal} size="md">
+      <Modal show={isOpen} onHide={onCloseModal} size="lg">
         <ModalHeader closeButton={true}>Transhipment</ModalHeader>
         <ModalBody>
           <Input
@@ -298,7 +298,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             isError={formik.errors.notify && formik.touched.notify}
           />
           <Input
-            label="Nor Tendered"
+            label="NOR Re-Tendered"
             type="datetime-local"
             name="norTendered"
             onChange={formik.handleChange}

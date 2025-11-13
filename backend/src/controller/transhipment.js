@@ -87,16 +87,21 @@ const pagedSearchTranshipmentDetail = async (req, res) => {
       ...(transhipmentUuid && { transhipmentUuid: transhipmentUuid }),
     };
 
-    const result = await VwTranshipmentDetail.findAndCountAll({
+    const result = await VwTranshipmentDetail.findAll({
       where: whereCondition,
-      limit: parseInt(pageSize),
-      offset: parseInt(pageSize * pageIndex),
+      // limit: parseInt(pageSize),
+      // offset: parseInt(pageSize * pageIndex),
       order: order,
     });
 
+    const totalWeight = await VwTranshipmentDetail.sum("cargoOnb", {
+      where: whereCondition,
+    });
+
     res.json({
-      data: result.rows,
+      data: result,
       totalCount: result.count,
+      totalWeight: totalWeight,
       pageIndex: parseInt(pageIndex),
       pageSize: parseInt(pageSize),
     });
