@@ -31,7 +31,14 @@ const pagedSearcBarging = async (req, res) => {
   try {
     const whereCondition = {
       ...(keyword && {
-        [Op.or]: [{ mv: { [Op.like]: `%${keyword}%` } }],
+        [Op.or]: [
+          sequelize.where(sequelize.fn("LOWER", sequelize.col("mv")), {
+            [Op.like]: `%${keyword.toLowerCase()}%`,
+          }),
+          sequelize.where(sequelize.fn("LOWER", sequelize.col("no")), {
+            [Op.like]: `%${keyword.toLowerCase()}%`,
+          }),
+        ],
       }),
       ...(company && { company: company }),
     };
@@ -58,7 +65,10 @@ const groupedBarging = async (req, res) => {
   try {
     const page = parseInt(req.query.pageIndex) || 1;
     const limit = parseInt(req.query.pageSize) || 10;
+    const keyword = req.query.keyword;
     const offset = (page - 1) * limit;
+
+    const whereClause = keyword ? `WHERE LOWER(mv) LIKE LOWER(:keyword)` : "";
 
     // ✅ Main grouped query
     const results = await sequelizeConnection.query(
@@ -70,12 +80,13 @@ const groupedBarging = async (req, res) => {
         MAX(date) AS date,
         MAX(createdDateTime) AS createdAt
       FROM barging
+      ${whereClause}
       GROUP BY no
       ORDER BY MAX(createdDateTime) DESC
       LIMIT :limit OFFSET :offset
       `,
       {
-        replacements: { limit, offset },
+        replacements: { limit, offset, keyword: `%${keyword}%` },
         type: QueryTypes.SELECT,
       }
     );
@@ -87,10 +98,12 @@ const groupedBarging = async (req, res) => {
       FROM (
         SELECT no
         FROM barging
+            ${whereClause}
         GROUP BY no
       ) AS grouped
       `,
       {
+        replacements: { keyword: `%${keyword}%` },
         type: QueryTypes.SELECT,
       }
     );
@@ -104,7 +117,6 @@ const groupedBarging = async (req, res) => {
       pageSize: limit,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "Error fetching barging data",
       error: error.message,

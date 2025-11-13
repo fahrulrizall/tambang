@@ -30,11 +30,9 @@ const pagedSearcTugBoat = async (req, res) => {
     const whereCondition = keyword
       ? {
           [Op.or]: [
-            {
-              name: {
-                [Op.like]: `%${keyword}%`,
-              },
-            },
+            sequelize.where(sequelize.fn("LOWER", sequelize.col("name")), {
+              [Op.like]: `%${keyword.toLowerCase()}%`,
+            }),
           ],
         }
       : {};

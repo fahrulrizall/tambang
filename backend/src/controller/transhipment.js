@@ -35,7 +35,11 @@ const pagedSearchTranshipment = async (req, res) => {
   try {
     const whereCondition = {
       ...(keyword && {
-        [Op.or]: [{ mv: { [Op.like]: `%${keyword}%` } }],
+        [Op.or]: [
+          sequelize.where(sequelize.fn("LOWER", sequelize.col("mv")), {
+            [Op.like]: `%${keyword.toLowerCase()}%`,
+          }),
+        ],
       }),
       ...(company && { company: company }),
     };
@@ -82,7 +86,11 @@ const pagedSearchTranshipmentDetail = async (req, res) => {
   try {
     const whereCondition = {
       ...(keyword && {
-        [Op.or]: [{ mv: { [Op.like]: `%${keyword}%` } }],
+        [Op.or]: [
+          sequelize.where(sequelize.fn("LOWER", sequelize.col("name")), {
+            [Op.like]: `%${keyword.toLowerCase()}%`,
+          }),
+        ],
       }),
       ...(transhipmentUuid && { transhipmentUuid: transhipmentUuid }),
     };
