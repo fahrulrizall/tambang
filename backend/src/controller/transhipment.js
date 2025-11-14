@@ -228,6 +228,54 @@ const updateTranshipment = async (req, res) => {
   }
 };
 
+const updateTranshipmentOneByOneField = async (req, res) => {
+  const { uuid } = req.params;
+  const request = req.body;
+  const errros = validationResult(req);
+
+  if (!errros.isEmpty()) {
+    return res.status(400).json({
+      messages: errros.array(),
+    });
+  }
+
+  const transaction = await sequelizeConnection.transaction();
+
+  try {
+    const result = await Transhipment.findOne({
+      where: {
+        uuid: uuid,
+      },
+      raw: true,
+    });
+
+    await Transhipment.update(
+      {
+        ...request,
+        ...result,
+        lastModifiedBy: decodeToken(req, "uuid"),
+        lastModifiedDateTime: moment(new Date().toUTCString()).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+      },
+      {
+        where: {
+          uuid,
+        },
+        transaction,
+      }
+    );
+
+    await transaction.commit();
+
+    res.json({
+      id: uuid,
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
 const updateTranshipmentDetail = async (req, res) => {
   const { uuid } = req.params;
   const request = req.body;
@@ -379,4 +427,5 @@ module.exports = {
   deleteTranshipmentDetail,
   readTranshipment,
   readTranshipmentDetail,
+  updateTranshipmentOneByOneField,
 };

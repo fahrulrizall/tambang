@@ -83,6 +83,23 @@ const UpdateTranshipment = (uuid, data) => {
     _options
   );
 };
+
+const UpdateTranshipmentOneByOne = (uuid, data) => {
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
+  return _Patch(
+    `${process.env.REACT_APP_API_URL}/${endpoint}/onebyone/${uuid}`,
+    data,
+    _options
+  );
+};
+
 const UpdateTranshipmentDetail = (uuid, data) => {
   let accessToken = Cookies.get("accessToken");
   let _options = {
@@ -168,4 +185,5 @@ export {
   DeleteTranshipmentDetail,
   ReadTranshipment,
   ReadTranshipmentDetail,
+  UpdateTranshipmentOneByOne,
 };

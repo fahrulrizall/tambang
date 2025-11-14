@@ -289,10 +289,7 @@ export default function DetailList({ selected: headerSelected }) {
                       </tr>
                       <tr>
                         <td>Balance Cargo :</td>
-                        <td>
-                          {headerSelected?.stowagePlan -
-                            data.reduce((acc, item) => acc + item.cargoOnb, 0)}
-                        </td>
+                        <td>{headerSelected?.stowagePlan - total}</td>
                       </tr>
                       <tr>
                         <td>Loading Rate DTD :</td>
@@ -300,11 +297,7 @@ export default function DetailList({ selected: headerSelected }) {
                       </tr>
                       <tr>
                         <td>Loading Rate PTD :</td>
-                        <td>
-                          {(data.reduce((acc, item) => acc + item.cargoOnb, 0) *
-                            24) /
-                            12}
-                        </td>
+                        <td>-</td>
                       </tr>
                       <tr>
                         <td>TPH :</td>
@@ -357,7 +350,7 @@ export default function DetailList({ selected: headerSelected }) {
                       {data.map((item, index) => {
                         return (
                           <tr key={index}>
-                            <td>{item.name}</td>
+                            <td>{item.barge}</td>
                             <td>{item.cargoOnb}</td>
                           </tr>
                         );

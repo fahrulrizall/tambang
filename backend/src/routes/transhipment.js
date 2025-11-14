@@ -34,6 +34,11 @@ TranshipmentRoutes.patch(
   TranshipmentController.updateTranshipment
 );
 TranshipmentRoutes.patch(
+  "/onebyone/:uuid",
+  CheckUserRole(allRole),
+  TranshipmentController.updateTranshipmentOneByOneField
+);
+TranshipmentRoutes.patch(
   "/detail/:uuid",
   CheckUserRole(allRole),
   TranshipmentController.updateTranshipmentDetail
