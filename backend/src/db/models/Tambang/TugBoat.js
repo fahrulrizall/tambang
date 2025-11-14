@@ -22,7 +22,7 @@ TugBoat.init(
       type: DataTypes.STRING(),
     },
     gttb: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     ptb: {
       type: DataTypes.STRING(),
@@ -31,13 +31,13 @@ TugBoat.init(
       type: DataTypes.STRING(),
     },
     gtbg: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     pbg: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     feet: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     ...AuditableField,
   },

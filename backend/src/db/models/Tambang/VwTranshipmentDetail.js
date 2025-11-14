@@ -40,7 +40,7 @@ VwTranshipmentDetail.init(
       type: DataTypes.DATE(),
     },
     cargoOnb: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     barge: {
       type: DataTypes.STRING(),

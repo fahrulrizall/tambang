@@ -165,16 +165,6 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
           />
 
           <Input
-            label="Alongside"
-            type="datetime-local"
-            name="alongside"
-            onChange={formik.handleChange}
-            value={formik.values.alongside}
-            errorMessage={formik.errors?.alongside}
-            isError={formik.errors.alongside && formik.touched.alongside}
-          />
-
-          <Input
             label="Arrived at Jetty"
             type="datetime-local"
             name="arrivedatJetty"
@@ -184,6 +174,16 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             isError={
               formik.errors.arrivedatJetty && formik.touched.arrivedatJetty
             }
+          />
+
+          <Input
+            label="Alongside"
+            type="datetime-local"
+            name="alongside"
+            onChange={formik.handleChange}
+            value={formik.values.alongside}
+            errorMessage={formik.errors?.alongside}
+            isError={formik.errors.alongside && formik.touched.alongside}
           />
 
           <Input

@@ -33,11 +33,12 @@ export default function DetailList() {
     {
       name: "Cargo",
     },
-    {
-      name: "Alongside",
-    },
+
     {
       name: "Arrived at Jetty",
+    },
+    {
+      name: "Alongside",
     },
     {
       name: "Commanced",
@@ -73,12 +74,12 @@ export default function DetailList() {
       name: "cargo",
     },
     {
-      name: "alongside",
-      view: (data) => convertUtcUser(data.alongside),
-    },
-    {
       name: "arrivedatJetty",
       view: (data) => convertUtcUser(data.arrivedatJetty),
+    },
+    {
+      name: "alongside",
+      view: (data) => convertUtcUser(data.alongside),
     },
     {
       name: "commanced",

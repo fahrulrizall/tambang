@@ -43,7 +43,7 @@ TranshipmentDetail.init(
       type: DataTypes.DATE(),
     },
     cargoOnb: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     remarks: {
       type: DataTypes.STRING(),

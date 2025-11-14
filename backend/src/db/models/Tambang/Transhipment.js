@@ -16,7 +16,7 @@ Transhipment.init(
       type: DataTypes.UUID(),
     },
     stowagePlan: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     loadingPort: {
       type: DataTypes.STRING(),
@@ -44,6 +44,9 @@ Transhipment.init(
     },
     norTendered: {
       type: DataTypes.DATE(),
+    },
+    tendered: {
+      type: DataTypes.STRING(),
     },
     ...AuditableField,
   },

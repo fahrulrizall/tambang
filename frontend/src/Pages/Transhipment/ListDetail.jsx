@@ -16,6 +16,7 @@ import FormDetail from "./FormDetail";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { convertUtcUser } from "../../helpers";
+import moment from "moment";
 
 export default function DetailList({ selected: headerSelected }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -271,8 +272,12 @@ export default function DetailList({ selected: headerSelected }) {
                         <td>{headerSelected?.stowagePlan}</td>
                       </tr>
                       <tr>
-                        <td>NOR Tendered :</td>
-                        <td>{headerSelected?.norTendered}</td>
+                        <td>{headerSelected?.tendered} :</td>
+                        <td>
+                          {moment(headerSelected?.norTendered).format(
+                            "DD-MM-YYYY"
+                          )}
+                        </td>
                       </tr>
                       <tr>
                         <td>Previous Cargo :</td>
@@ -280,9 +285,7 @@ export default function DetailList({ selected: headerSelected }) {
                       </tr>
                       <tr>
                         <td>Cargo Onboard :</td>
-                        <td>
-                          {data.reduce((acc, item) => acc + item.cargoOnb, 0)}
-                        </td>
+                        <td>{total}</td>
                       </tr>
                       <tr>
                         <td>Balance Cargo :</td>

@@ -11,7 +11,15 @@ import { ModalPopUp, Input } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import { useFormik } from "formik";
 import { Action } from "../../Constant";
-import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
+import {
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  Row,
+  Col,
+  FormLabel,
+} from "react-bootstrap";
 import moment from "moment";
 import { convertUtc } from "../../helpers";
 
@@ -44,6 +52,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
     onSubmit: (values) => {
       const model = {
         ...values,
+        tendered: values.tendered?.value,
         bargingUuid: values.vessel?.value,
       };
       if (action === Action.CREATE) {
@@ -118,12 +127,12 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
 
   const options = [
     {
-      value: "KJB",
-      label: "PT. KALTIM JAYA BARA",
+      value: "NOR Tendered",
+      label: "NOR Tendered",
     },
     {
-      value: "HAA",
-      label: "PT. HAMPARAN ANUGRAH ABADI",
+      value: "NOR Re-Tendered",
+      label: "NOR Re-Tendered",
     },
   ];
 
@@ -138,6 +147,10 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             vessel: {
               value: response.data.bargingUuid,
               label: response.data.no,
+            },
+            tendered: response.data.tendered && {
+              value: response.data.tendered,
+              label: response.data.tendered,
             },
           })
         )
@@ -297,15 +310,38 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
             errorMessage={formik.errors?.notify}
             isError={formik.errors.notify && formik.touched.notify}
           />
-          <Input
-            label="NOR Re-Tendered"
-            type="datetime-local"
-            name="norTendered"
-            onChange={formik.handleChange}
-            value={formik.values.norTendered}
-            errorMessage={formik.errors?.norTendered}
-            isError={formik.errors.norTendered && formik.touched.norTendered}
-          />
+          <Row className="mb-3">
+            <Col md={3}>
+              <FormLabel>NOR Tendered</FormLabel>
+            </Col>
+            <Col md={4}>
+              <Input
+                type="select"
+                name="tendered"
+                onChange={formik.handleChange}
+                value={formik.values.tendered}
+                errorMessage={formik.errors?.tendered}
+                isError={formik.errors.tendered && formik.touched.tendered}
+                useLabel={false}
+                options={options}
+              />
+            </Col>
+            <Col>
+              <Input
+                label="NOR Re-Tendered"
+                type="datetime-local"
+                name="norTendered"
+                onChange={formik.handleChange}
+                value={formik.values.norTendered}
+                errorMessage={formik.errors?.norTendered}
+                isError={
+                  formik.errors.norTendered && formik.touched.norTendered
+                }
+                useLabel={false}
+              />
+            </Col>
+          </Row>
+
           <Input
             label="Blending"
             type="checkbox"

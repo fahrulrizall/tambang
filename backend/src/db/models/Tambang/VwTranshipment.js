@@ -16,7 +16,7 @@ VwTranshipment.init(
       type: DataTypes.UUID(),
     },
     stowagePlan: {
-      type: DataTypes.FLOAT(),
+      type: DataTypes.STRING(),
     },
     loadingPort: {
       type: DataTypes.STRING(),
@@ -50,6 +50,9 @@ VwTranshipment.init(
     },
     no: {
       type: DataTypes.INTEGER(),
+    },
+    tendered: {
+      type: DataTypes.STRING(),
     },
     ...AuditableField,
   },
