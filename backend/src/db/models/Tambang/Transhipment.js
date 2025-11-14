@@ -12,9 +12,6 @@ Transhipment.init(
       type: DataTypes.UUID,
       primaryKey: true,
     },
-    bargingUuid: {
-      type: DataTypes.UUID(),
-    },
     stowagePlan: {
       type: DataTypes.STRING(),
     },
@@ -47,6 +44,9 @@ Transhipment.init(
     },
     tendered: {
       type: DataTypes.STRING(),
+    },
+    noBarging: {
+      type: DataTypes.INTEGER(),
     },
     ...AuditableField,
   },

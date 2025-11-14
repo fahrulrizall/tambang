@@ -126,7 +126,7 @@ export default function PlantTable() {
               setSelected(data);
               setParams({
                 uuid: data.uuid,
-                bargingUuid: data.bargingUuid,
+                no: data.noBarging,
               });
             }}
             style={{

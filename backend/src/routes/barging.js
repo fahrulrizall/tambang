@@ -24,6 +24,12 @@ BargingRoutes.get(
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
   BargingController.pagedSearcBargingDetail
 );
+BargingRoutes.get(
+  "/list/detail/no/:noBarging",
+  CheckUserRole(allRole),
+  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
+  BargingController.pagedSearcBargingDetailByNo
+);
 BargingRoutes.post(
   "/",
   CheckUserRole(allRole),

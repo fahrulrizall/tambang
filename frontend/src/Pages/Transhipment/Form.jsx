@@ -211,18 +211,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               formik.setFieldValue("vessel", e.target.value);
               formik.setFieldValue("mv", e.target.value?.mv);
               formik.setFieldValue("company", e.target.value?.company);
-              const bargingDetail = await ReadBarging(e.target.value.value);
-              const detail = bargingDetail.data.detail.map((item) => ({
-                ...item,
-                tugBoat: item.name,
-                arrivedatJetty: convertUtc(item.arrivedatJetty),
-                alongside: convertUtc(item.alongside),
-                commanced: convertUtc(item.commanced),
-                completed: convertUtc(item.completed),
-                castedOff: convertUtc(item.castedOff),
-              }));
-
-              formik.setFieldValue("detail", detail);
+              formik.setFieldValue("noBarging", e.target.value?.no);
             }}
             value={formik.values.vessel}
             errorMessage={formik.errors?.vessel}
@@ -233,6 +222,7 @@ export default function TugBoatForm({ isOpen, toggle, selected }) {
               value: item.uuid,
               label: `${item.no} - ${item.mv}`,
               mv: item.mv,
+              no: item.no,
             })}
           />
           <Input

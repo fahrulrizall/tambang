@@ -4,6 +4,7 @@ import {
   CreateTranshipmentDetail,
   UpdateTranshipmentDetail,
   ReadTranshipmentDetail,
+  PagedSearchBargingDetailByNoMV,
 } from "../../API";
 import { Input } from "../../Components";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
@@ -17,7 +18,7 @@ export default function TugBoatForm({ isOpen, toggle, selected, nextNo }) {
   const { setLastDataModificationTimestamp, setToastInfo, setIsShowToast } =
     useApplicationStoreContext();
   const [searchParams, setSearchParams] = useSearchParams();
-  const bargingUuid = searchParams.get("bargingUuid");
+  const noBarging = searchParams.get("no");
   const transhipmentUuid = searchParams.get("uuid");
   const uuid = selected?.uuid;
   const [action, setAction] = useState(Action.CREATE);
@@ -140,9 +141,9 @@ export default function TugBoatForm({ isOpen, toggle, selected, nextNo }) {
               formik.setFieldValue("barge", e.target.value?.barge);
             }}
             additionalParams={{
-              bargingUuid: bargingUuid,
+              noBarging: noBarging,
             }}
-            api={PagedSearchBargingDetail}
+            api={PagedSearchBargingDetailByNoMV}
             handleSetOptions={(pt) => ({
               value: pt.uuid,
               label: pt.name,

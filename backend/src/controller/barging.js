@@ -180,6 +180,62 @@ const pagedSearcBargingDetail = async (req, res) => {
   }
 };
 
+const pagedSearcBargingDetailByNo = async (req, res) => {
+  const errros = validationResult(req);
+  const { noBarging } = req.params;
+  const { pageIndex, pageSize, keyword, orderByFieldName, sortOrder } =
+    req.query;
+
+  let order = [];
+  if (orderByFieldName) {
+    const direction =
+      sortOrder && sortOrder.toUpperCase() === "DESC" ? "DESC" : "ASC";
+    order = [[orderByFieldName, direction]];
+  }
+
+  if (!errros.isEmpty()) {
+    return res.status(400).json({
+      messages: errros.array(),
+    });
+  }
+
+  const Op = sequelize.Op;
+
+  try {
+    const whereCondition = {
+      ...(keyword && {
+        [Op.and]: [
+          sequelize.where(sequelize.fn("LOWER", sequelize.col("name")), {
+            [Op.like]: `%${keyword.toLowerCase()}%`,
+          }),
+        ],
+      }),
+      ...(noBarging && { noMV: noBarging }),
+    };
+
+    const result = await VwBargingDetail.findAll({
+      where: whereCondition,
+      // limit: parseInt(pageSize),
+      // offset: parseInt(pageSize * pageIndex),
+      order: order,
+    });
+
+    const totalWeight = await VwBargingDetail.sum("cargo", {
+      where: whereCondition,
+    });
+
+    res.json({
+      data: result,
+      totalCount: result.count,
+      totalWeight: totalWeight,
+      pageIndex: parseInt(pageIndex),
+      pageSize: parseInt(pageSize),
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
 const createNewBarging = async (req, res) => {
   const errros = validationResult(req);
   const request = req.body;
@@ -426,4 +482,5 @@ module.exports = {
   readBarging,
   readBargingDetail,
   groupedBarging,
+  pagedSearcBargingDetailByNo,
 };

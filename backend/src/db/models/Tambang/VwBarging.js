@@ -53,6 +53,9 @@ VwBargingDetail.init(
     barge: {
       type: DataTypes.STRING(),
     },
+    noMV: {
+      type: DataTypes.INTEGER(),
+    },
     ...AuditableField,
   },
   {
