@@ -404,7 +404,6 @@ export default function DetailList({
                             }
                           />
                           <p className="fs-5">
-                            {" "}
                             ={(total || 0) / Number(headerSelected?.tph || 0)}
                           </p>
                         </td>
