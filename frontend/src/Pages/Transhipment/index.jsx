@@ -260,7 +260,9 @@ export default function PlantTable() {
                 />
               </div>
             </div>
-            {uuid && <DetailList selected={selected} />}
+            {uuid && (
+              <DetailList selected={selected} setSelected={setSelected} />
+            )}
           </div>
           <Form isOpen={isOpen} selected={selected} toggle={setIsOpen} />
           <ModalPopUp

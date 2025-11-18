@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import {
   DataTable,
@@ -10,6 +10,8 @@ import { useSearchParams } from "react-router-dom";
 import {
   PagedSearchTranshipmentDetail,
   DeleteTranshipmentDetail,
+  PagedSearchBargingDetailByNoMV,
+  UpdateTranshipment,
 } from "../../API";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
 import FormDetail from "./FormDetail";
@@ -18,14 +20,19 @@ import Tabs from "react-bootstrap/Tabs";
 import { convertUtcUser } from "../../helpers";
 import moment from "moment";
 
-export default function DetailList({ selected: headerSelected }) {
+export default function DetailList({
+  selected: headerSelected,
+  setSelected: setSelectedHeader,
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState();
   const [isOpen, setIsOpen] = useState(false);
   const uuid = searchParams.get("uuid");
+  const noBarging = searchParams.get("no");
   const [isShowModal, setIsShowModal] = useState(false);
   const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
+  const [updateBarge, setUpdateBarge] = useState([]);
   const {
     lastDataModificationTimestamp,
     setLastDataModificationTimestamp,
@@ -194,6 +201,22 @@ export default function DetailList({ selected: headerSelected }) {
     );
   };
 
+  useEffect(() => {
+    PagedSearchBargingDetailByNoMV({
+      pageIndex: 0,
+      pageSize: 1000,
+      noBarging,
+    }).then((res) => {
+      const bargeList = new Set(data.map((x) => x.barge.toLowerCase()));
+      const alldata = res.data.data;
+
+      const updated = alldata.filter(
+        (a) => !bargeList.has(a.barge.toLowerCase())
+      );
+      setUpdateBarge(updated);
+    });
+  }, [data]);
+
   return (
     <div className="card">
       <div className="card-body">
@@ -259,7 +282,37 @@ export default function DetailList({ selected: headerSelected }) {
               <div className="col-md-8">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <h5 class="fw-bold">SUMMARY</h5>
-                  <CopySummaryButton data={data} header={headerSelected} />
+                  <div>
+                    <button
+                      className="btn btn-primary me-2"
+                      onClick={() => {
+                        UpdateTranshipment(uuid, headerSelected)
+                          .then((response) => {
+                            setToastInfo({
+                              message: "Barging successfully update",
+                              background: "success",
+                            });
+                            setIsShowToast(true);
+                            setLastDataModificationTimestamp(
+                              new Date().getTime()
+                            );
+                          })
+                          .catch((err) => {
+                            setToastInfo({
+                              message:
+                                err.response.status === 403
+                                  ? err.response?.data?.message
+                                  : "Barging failed update",
+                              background: "danger",
+                            });
+                            setIsShowToast(true);
+                          });
+                      }}
+                    >
+                      Save
+                    </button>
+                    <CopySummaryButton data={data} header={headerSelected} />
+                  </div>
                 </div>
                 <div>
                   <div class="section-title">
@@ -275,13 +328,25 @@ export default function DetailList({ selected: headerSelected }) {
                         <td>{headerSelected?.tendered} :</td>
                         <td>
                           {moment(headerSelected?.norTendered).format(
-                            "DD-MM-YYYY"
+                            "DD-MM-YYYY HH:mm"
                           )}
                         </td>
                       </tr>
                       <tr>
                         <td>Previous Cargo :</td>
-                        <td>-</td>
+                        <td className="d-flex">
+                          <input
+                            type="text"
+                            className="form-control w-50"
+                            value={headerSelected?.prevCargo}
+                            onChange={(e) =>
+                              setSelectedHeader((prev) => ({
+                                ...prev,
+                                prevCargo: e.target.value,
+                              }))
+                            }
+                          />
+                        </td>
                       </tr>
                       <tr>
                         <td>Cargo Onboard :</td>
@@ -293,23 +358,82 @@ export default function DetailList({ selected: headerSelected }) {
                       </tr>
                       <tr>
                         <td>Loading Rate DTD :</td>
-                        <td>-</td>
+                        <td className="d-flex">
+                          <input
+                            type="number"
+                            className="form-control w-50"
+                            value={headerSelected?.loadingRateDTD}
+                            onChange={(e) =>
+                              setSelectedHeader((prev) => ({
+                                ...prev,
+                                loadingRateDTD: e.target.value,
+                              }))
+                            }
+                          />
+                        </td>
                       </tr>
                       <tr>
                         <td>Loading Rate PTD :</td>
-                        <td>-</td>
+                        <td className="d-flex">
+                          <input
+                            type="number"
+                            className="form-control w-50"
+                            value={headerSelected?.loadingRatePTD}
+                            onChange={(e) =>
+                              setSelectedHeader((prev) => ({
+                                ...prev,
+                                loadingRatePTD: e.target.value,
+                              }))
+                            }
+                          />
+                        </td>
                       </tr>
                       <tr>
                         <td>TPH :</td>
-                        <td>982</td>
+                        <td className="d-flex gap-2">
+                          <p className="fs-5">{total || 0}/</p>
+                          <input
+                            type="number"
+                            className="form-control w-50"
+                            value={headerSelected?.tph}
+                            onChange={(e) =>
+                              setSelectedHeader((prev) => ({
+                                ...prev,
+                                tph: e.target.value,
+                              }))
+                            }
+                          />
+                          <p className="fs-5">
+                            {" "}
+                            ={(total || 0) / Number(headerSelected?.tph || 0)}
+                          </p>
+                        </td>
                       </tr>
                       <tr>
                         <td>Commenced Loading :</td>
-                        <td>211025 19:00</td>
+                        <td>
+                          {moment(data[0]?.commanced).format(
+                            "DD-MM-YYYY HH:mm"
+                          )}
+                        </td>
                       </tr>
                       <tr>
                         <td>Est Completed Loading :</td>
-                        <td>261025 19:00</td>
+                        <td>
+                          <input
+                            type="datetime-local"
+                            className="form-control w-50"
+                            value={moment(
+                              headerSelected?.completedLoading
+                            ).format("yyyy-MM-DD HH:mm")}
+                            onChange={(e) =>
+                              setSelectedHeader((prev) => ({
+                                ...prev,
+                                completedLoading: e.target.value,
+                              }))
+                            }
+                          />
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -317,7 +441,7 @@ export default function DetailList({ selected: headerSelected }) {
 
                 <div>
                   <div class="section-title">Remarks :</div>
-                  <table class="table table-bordered table-sm align-middle">
+                  {/* <table class="table table-bordered table-sm align-middle">
                     <thead class="table-light">
                       <tr>
                         <th>Description</th>
@@ -340,7 +464,7 @@ export default function DetailList({ selected: headerSelected }) {
                         <td>00:09:00</td>
                       </tr>
                     </tbody>
-                  </table>
+                  </table> */}
                 </div>
 
                 <div>
@@ -363,11 +487,11 @@ export default function DetailList({ selected: headerSelected }) {
                 <div class="row">
                   <div class="col-md-4">
                     <p>
-                      <strong>H1</strong>
+                      {/* <strong>H1</strong> */}
                       <br />
-                      KJB : <br />
+                      {/* KJB : <br />
                       HAA : <br />
-                      Total :{" "}
+                      Total :{" "} */}
                     </p>
                   </div>
                 </div>
@@ -385,20 +509,17 @@ export default function DetailList({ selected: headerSelected }) {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>5</td>
-                        <td>TB Prima Star 64</td>
-                        <td>BG Prima Sakti 22</td>
-                        <td>5,890.260</td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>6</td>
-                        <td>TB Prima Star 65</td>
-                        <td>BG Prima Sakti 23</td>
-                        <td>5,890.261</td>
-                        <td></td>
-                      </tr>
+                      {updateBarge.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{item?.no}</td>
+                            <td>{item?.name}</td>
+                            <td>{item?.barge}</td>
+                            <td>{item?.cargo}</td>
+                            <td>{item?.remarks}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

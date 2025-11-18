@@ -48,6 +48,27 @@ Transhipment.init(
     noBarging: {
       type: DataTypes.INTEGER(),
     },
+    prevCargo: {
+      type: DataTypes.STRING(),
+    },
+    loadingRateDTD: {
+      type: DataTypes.STRING(),
+    },
+    loadingRatePTD: {
+      type: DataTypes.STRING(),
+    },
+    tph: {
+      type: DataTypes.STRING(),
+    },
+    completedLoading: {
+      type: DataTypes.DATE(),
+    },
+    remarks: {
+      type: DataTypes.DATE(),
+    },
+    cargoPerHold: {
+      type: DataTypes.STRING(),
+    },
     ...AuditableField,
   },
   {
