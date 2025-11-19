@@ -144,8 +144,8 @@ export default function ListRemarks({ transhipmentUuid }) {
 
   return (
     <div>
-      <h5>Remarks</h5>
       <DataTable
+        title="Remarks"
         api={PagedSearchRemarks}
         tableHeader={tableHeaders}
         tableBody={tableBody}

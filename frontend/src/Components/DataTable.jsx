@@ -82,11 +82,14 @@ export default function DataTable({
             />
           </div>
         )}
+        {title && (
+          <div className="col-sm-4 col-md-3">
+            <h6 className="fw-bold">{title}</h6>
+          </div>
+        )}
         {isAdd && (
           <div
-            className={`col-sm-8 col-md-${
-              isAdd ? "12" : "9"
-            } d-flex justify-content-end align-items-center`}
+            className={`col-sm-8 col-md-9 d-flex justify-content-end align-items-center`}
           >
             <button
               className="btn btn-primary"
