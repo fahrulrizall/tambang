@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { PagedSearchRemarks, DeleteRemarks } from "../../../API";
 import { convertUtcUser } from "../../../helpers";
 import { DataTable, ModalPopUp } from "../../../Components";
-import FormRemarks from "./FormRemarks";
+import FormRemarks from "./Form";
 import { useApplicationStoreContext } from "../../../Hook/UserHook";
-import { forEach } from "lodash";
 
 export default function ListRemarks({ transhipmentUuid, setTotalHours }) {
   const [selected, setSelected] = useState(null);
