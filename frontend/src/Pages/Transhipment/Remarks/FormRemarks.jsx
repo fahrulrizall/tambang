@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Modal, ModalBody, ModalHeader, ModalFooter } from "react-bootstrap";
 import { useFormik } from "formik";
-import { Input } from "../../Components";
-import { CreateRemarks, ReadRemarks, UpdateRemarks } from "../../API";
-import { Action } from "../../Constant";
-import { convertUtc } from "../../helpers";
+import { Input } from "../../../Components";
+import { CreateRemarks, ReadRemarks, UpdateRemarks } from "../../../API";
+import { Action } from "../../../Constant";
+import { convertUtc } from "../../../helpers";
 
 export default function FormRemarks({
   isOpen,

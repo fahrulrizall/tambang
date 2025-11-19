@@ -19,7 +19,7 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { convertUtcUser } from "../../helpers";
 import moment from "moment";
-import ListRemarks from "./ListRemarks";
+import ListRemarks from "./Remarks/ListRemarks";
 
 export default function DetailList({
   selected: headerSelected,

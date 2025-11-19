@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { PagedSearchRemarks, DeleteRemarks } from "../../API";
-import { convertUtcUser } from "../../helpers";
-import { DataTable, ModalPopUp } from "../../Components";
+import { PagedSearchRemarks, DeleteRemarks } from "../../../API";
+import { convertUtcUser } from "../../../helpers";
+import { DataTable, ModalPopUp } from "../../../Components";
 import FormRemarks from "./FormRemarks";
-import { useApplicationStoreContext } from "../../Hook/UserHook";
+import { useApplicationStoreContext } from "../../../Hook/UserHook";
 
 export default function ListRemarks({ transhipmentUuid }) {
   const [selected, setSelected] = useState(null);
