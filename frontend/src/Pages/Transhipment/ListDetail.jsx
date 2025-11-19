@@ -19,6 +19,8 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { convertUtcUser } from "../../helpers";
 import moment from "moment";
+import FormRemarks from "./FormRemarks";
+import ListRemarks from "./ListRemarks";
 
 export default function DetailList({
   selected: headerSelected,
@@ -30,6 +32,7 @@ export default function DetailList({
   const uuid = searchParams.get("uuid");
   const noBarging = searchParams.get("no");
   const [isShowModal, setIsShowModal] = useState(false);
+  const [isShowModalRemarks, setIsShowModalRemarks] = useState(false);
   const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const [updateBarge, setUpdateBarge] = useState([]);
@@ -280,8 +283,8 @@ export default function DetailList({
           <Tab eventKey="profile" title="Summarize">
             <div className="row">
               <div className="col-md-8">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="fw-bold">SUMMARY</h5>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h5 className="fw-bold">SUMMARY</h5>
                   <div>
                     <button
                       className="btn btn-primary me-2"
@@ -315,10 +318,10 @@ export default function DetailList({
                   </div>
                 </div>
                 <div>
-                  <div class="section-title">
+                  <div className="section-title">
                     Discharge, {headerSelected?.dischargingPort}
                   </div>
-                  <table class="table table-borderless summary-table">
+                  <table className="table table-borderless summary-table">
                     <tbody>
                       <tr>
                         <td>Stowage Plan :</td>
@@ -354,7 +357,11 @@ export default function DetailList({
                       </tr>
                       <tr>
                         <td>Balance Cargo :</td>
-                        <td>{headerSelected?.stowagePlan - total}</td>
+                        <td>
+                          {parseFloat(
+                            headerSelected?.stowagePlan - total
+                          ).toFixed(3)}
+                        </td>
                       </tr>
                       <tr>
                         <td>Loading Rate DTD :</td>
@@ -438,37 +445,11 @@ export default function DetailList({
                   </table>
                 </div>
 
-                <div>
-                  <div class="section-title">Remarks :</div>
-                  {/* <table class="table table-bordered table-sm align-middle">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Description</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Nett</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Heavy Rain</td>
-                        <td>201025 19:45</td>
-                        <td>201025 20:45</td>
-                        <td>00:01:00</td>
-                      </tr>
-                      <tr>
-                        <td>Waiting Barge</td>
-                        <td>201025 23:45</td>
-                        <td>211025 08:45</td>
-                        <td>00:09:00</td>
-                      </tr>
-                    </tbody>
-                  </table> */}
-                </div>
+                <ListRemarks transhipmentUuid={uuid} />
 
                 <div>
-                  <div class="section-title">Cargo per Barge :</div>
-                  <table class="table table-borderless table-sm">
+                  <div className="section-title">Cargo per Barge :</div>
+                  <table className="table table-borderless table-sm">
                     <tbody>
                       {data.map((item, index) => {
                         return (
@@ -482,9 +463,9 @@ export default function DetailList({
                   </table>
                 </div>
 
-                <div class="section-title">Cargo per Hold :</div>
-                <div class="row">
-                  <div class="col-md-4">
+                <div className="section-title">Cargo per Hold :</div>
+                <div className="row">
+                  <div className="col-md-4">
                     <p>
                       {/* <strong>H1</strong> */}
                       <br />
@@ -496,9 +477,9 @@ export default function DetailList({
                 </div>
 
                 <div>
-                  <div class="section-title">Update Barge :</div>
-                  <table class="table table-bordered table-sm align-middle">
-                    <thead class="table-light">
+                  <div className="section-title">Update Barge :</div>
+                  <table className="table table-bordered table-sm align-middle">
+                    <thead className="table-light">
                       <tr>
                         <th>No</th>
                         <th>Tug Boat</th>

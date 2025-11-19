@@ -3,7 +3,6 @@ import {
   UpdateTranshipment,
   ReadTranshipment,
   PagedSearchBargingGroup,
-  ReadBarging,
   CreateTranshipment,
   DeleteTranshipment,
 } from "../../API";
