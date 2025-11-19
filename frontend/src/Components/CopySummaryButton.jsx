@@ -18,11 +18,11 @@ const CopySummaryButton = ({
     Description               Start                 End                   Total
     ${remarksList
       .map((item) => {
-        const desc = item.descriptions.padEnd(25, " ");
-        const start = convertUtcUser(item.start).padEnd(20, " ");
-        const end = convertUtcUser(item.end).padEnd(20, " ");
-        const startA = new Date(item.start);
-        const endA = new Date(item.end);
+        const desc = item.descriptions?.padEnd(25, " ");
+        const start = convertUtcUser(item?.start)?.padEnd(20, " ");
+        const end = convertUtcUser(item?.end)?.padEnd(20, " ");
+        const startA = new Date(item?.start);
+        const endA = new Date(item?.end);
 
         const diffMs = endA - startA;
         const totalMinutes = Math.floor(diffMs / (1000 * 60)); // total minutes
