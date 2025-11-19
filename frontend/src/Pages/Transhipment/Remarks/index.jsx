@@ -5,7 +5,11 @@ import { DataTable, ModalPopUp } from "../../../Components";
 import FormRemarks from "./Form";
 import { useApplicationStoreContext } from "../../../Hook/UserHook";
 
-export default function ListRemarks({ transhipmentUuid, setTotalHours }) {
+export default function ListRemarks({
+  transhipmentUuid,
+  setTotalHours,
+  setRemarksList,
+}) {
   const [selected, setSelected] = useState(null);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowModalRemarks, setIsShowModalRemarks] = useState(false);
@@ -49,9 +53,16 @@ export default function ListRemarks({ transhipmentUuid, setTotalHours }) {
         const end = new Date(data.end);
 
         const diffMs = end - start;
-        const diffHours = diffMs / (1000 * 60 * 60);
+        const totalMinutes = Math.floor(diffMs / (1000 * 60)); // total minutes
 
-        return diffHours + " Hours";
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        const hhmm = `${String(hours).padStart(2, "0")}:${String(
+          minutes
+        ).padStart(2, "0")}`;
+
+        return hhmm;
       },
     },
     {
@@ -173,6 +184,7 @@ export default function ListRemarks({ transhipmentUuid, setTotalHours }) {
             const diffHours = diffMs / (1000 * 60 * 60);
             totalHours += diffHours;
           });
+          setRemarksList(data.data);
           setTotalHours((prev) => prev - totalHours);
         }}
         usePagination={false}

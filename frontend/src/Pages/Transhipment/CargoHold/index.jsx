@@ -4,7 +4,7 @@ import { DataTable, ModalPopUp } from "../../../Components";
 import Form from "./Form";
 import { useApplicationStoreContext } from "../../../Hook/UserHook";
 
-export default function ListRemarks({ transhipmentUuid }) {
+export default function ListRemarks({ transhipmentUuid, setCargoList }) {
   const [selected, setSelected] = useState(null);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowModalRemarks, setIsShowModalRemarks] = useState(false);
@@ -161,6 +161,7 @@ export default function ListRemarks({ transhipmentUuid }) {
         }}
         callback={(response) => {
           setLength(response.data.data?.length);
+          setCargoList(response.data.data);
         }}
       />
       <Form

@@ -31,11 +31,13 @@ export default function DetailList({
   const [selected, setSelected] = useState();
   const [isOpen, setIsOpen] = useState(false);
   const uuid = searchParams.get("uuid");
-
   const [isShowModal, setIsShowModal] = useState(false);
   const [total, setTotal] = useState(0);
   const [totalHours, setTotalHours] = useState(0);
-  const [totalHoursTPH, setTotalHoursTPH] = useState(0);
+  const [totalHoursRemarks, setTotalHoursRemarks] = useState(0);
+  const [remarksList, setRemarksList] = useState([]);
+  const [cargoList, setCargoList] = useState([]);
+  const [updateBargeList, setUpdateBargeList] = useState([]);
   const [data, setData] = useState([]);
   const {
     lastDataModificationTimestamp,
@@ -313,7 +315,16 @@ export default function DetailList({
                     >
                       Save
                     </button>
-                    <CopySummaryButton data={data} header={headerSelected} />
+                    <CopySummaryButton
+                      total={total}
+                      totalHours={totalHours}
+                      totalHoursRemarks={totalHoursRemarks}
+                      data={data}
+                      header={headerSelected}
+                      remarksList={remarksList}
+                      cargoList={cargoList}
+                      updateBargeList={updateBargeList}
+                    />
                   </div>
                 </div>
                 <div>
@@ -398,7 +409,7 @@ export default function DetailList({
                         <td>TPH :</td>
                         <td className="d-flex gap-2">
                           {parseFloat(
-                            total / (totalHours - totalHoursTPH)
+                            total / (totalHours - totalHoursRemarks)
                           ).toFixed(3)}
                         </td>
                       </tr>
@@ -434,11 +445,15 @@ export default function DetailList({
 
                 <ListRemarks
                   transhipmentUuid={uuid}
-                  setTotalHours={setTotalHoursTPH}
+                  setTotalHours={setTotalHoursRemarks}
+                  setRemarksList={setRemarksList}
                 />
                 <CargoBarge data={data} />
-                <CargoHold transhipmentUuid={uuid} />
-                <UpdateBarge />
+                <CargoHold
+                  transhipmentUuid={uuid}
+                  setCargoList={setCargoList}
+                />
+                <UpdateBarge setUpdateBargeList={setUpdateBargeList} />
               </div>
             </div>
           </Tab>

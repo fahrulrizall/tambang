@@ -3,7 +3,7 @@ import { useApplicationStoreContext } from "../../../Hook/UserHook";
 import { PagedSearchBargingDetailByNoMV } from "../../../API";
 import { useSearchParams } from "react-router-dom";
 
-export default function PlantTable({ data }) {
+export default function PlantTable({ setUpdateBargeList }) {
   const { lastDataModificationTimestamp } = useApplicationStoreContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const noBarging = searchParams.get("no");
@@ -55,6 +55,7 @@ export default function PlantTable({ data }) {
       }}
       isAdd={false}
       usePagination={false}
+      callback={(response) => setUpdateBargeList(response.data.data)}
     />
   );
 }

@@ -1,22 +1,71 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import moment from "moment";
+import { convertUtcUser } from "../helpers";
 
-const CopySummaryButton = ({ data, header }) => {
+const CopySummaryButton = ({
+  total,
+  totalHours,
+  totalHoursRemarks,
+  data,
+  header,
+  remarksList,
+  cargoList,
+  updateBargeList,
+}) => {
   const [copied, setCopied] = useState(false);
 
-  const total = data?.reduce((acc, item) => acc + item.cargoOnb, 0);
+  const remarksText = `Remarks
+    Description               Start                 End                   Total
+    ${remarksList
+      .map((item) => {
+        const desc = item.descriptions.padEnd(25, " ");
+        const start = convertUtcUser(item.start).padEnd(20, " ");
+        const end = convertUtcUser(item.end).padEnd(20, " ");
+        const startA = new Date(item.start);
+        const endA = new Date(item.end);
 
-  const cargoPerBargeText = `Cargo per Barge :
-  ${data.map((item) => `${item.name}\t${item.cargoOnb}`).join("\n")}
-  `;
-  const updateBargeText = `Update Barge :
-  No\tTug Boat\tBarge\tCargo\tRemarks
-  ${data
-    .map(
-      (item, index) =>
-        `${item.no}\t${item.tugBoat}\t${item.barge}\t${item.cargoOnb}\t${
-          item.remarks || ""
-        }`
-    )
+        const diffMs = endA - startA;
+        const totalMinutes = Math.floor(diffMs / (1000 * 60)); // total minutes
+
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        const hhmm = `${String(hours).padStart(2, "0")}:${String(
+          minutes
+        ).padStart(2, "0")}`;
+
+        return `${desc}${start}${end}${hhmm}`;
+      })
+      .join("\n")}
+`;
+
+  const cargoPerBargeText =
+    "Cargo per Barge:\n" +
+    data.map((item) => `${item.name}\t${item.cargoOnb}`).join("\n");
+
+  const updateBargeText =
+    "Update Barge:\n" +
+    "No\tTug Boat\tBarge\tCargo\tRemarks\n" +
+    updateBargeList
+      .map(
+        (item) =>
+          `${item.no}\t${item.name}\t${item.barge}\t${item.cargo}\t${
+            item.remarks || ""
+          }`
+      )
+      .join("\n");
+
+  const cargoPerHoldText = `Cargo per Hold
+  No               KJB                 HAA                   Total
+  ${cargoList
+    .map((item) => {
+      const desc = item.no.toString().padEnd(25, " ");
+      const kjb = item.kjb.padEnd(20, " ");
+      const haa = item.haa.padEnd(20, " ");
+      const total = Number(item.kjb) + Number(item.haa);
+
+      return `${desc}${kjb}${haa}${total}`;
+    })
     .join("\n")}
   `;
 
@@ -24,54 +73,26 @@ const CopySummaryButton = ({ data, header }) => {
 
   Discharge, ${header?.dischargingPort}
   Stowage Plan :	${header?.stowagePlan}
-  NOR Tendered :	${header?.norTendered}
-  Previous Cargo :	-
+  ${header?.tendered} :	${moment(header?.norTendered).format("DD-MM-YYYY HH:mm")}
+  Previous Cargo :	${header?.prevCargo}
   Cargo Onboard :	${total}
-  Balance Cargo :	${header?.stowagePlan - total}
-  Loading Rate DTD :	-
-  Loading Rate PTD :	 ${(total * 24) / 12}
-  TPH :	982
-  Commanced Loading :	211025 19:00
-  Est Commpleted Loading :	261025 19:00
+  Balance Cargo :	${parseFloat(header?.stowagePlan - total).toFixed(3)}
+  Loading Rate DTD :	${header.loadingRateDTD}
+  Loading Rate PTD :	 ${header.loadingRatePTD}
+  TPH :	${parseFloat(total / (totalHours - totalHoursRemarks)).toFixed(3)}
+  Commanced Loading :	${moment(data[0]?.commanced).format("DD-MM-YYYY HH:mm")}
+  Est Commpleted Loading :	${moment(header?.completedLoading).format(
+    "yyyy-MM-DD HH:mm"
+  )}
 
-  Remarks :
-  Description	Start	End	Nett
-  Heavy Rain	201025 19:45	201025 20:45	00:01:00
-  Waiting Barge	201025 23:45	211025 08:45	00:09:00
+ 
+  ${remarksText}
 
   ${cargoPerBargeText}
 
-  Cargo per Hold :
-  H1
-  KJB :
-  HAA :
-  Total :
-  H2
-  KJB :
-  HAA :
-  Total :
-  H3
-  KJB :
-  HAA :
-  Total :
-  H4
-  KJB :
-  HAA :
-  Total :
-  H5
-  KJB :
-  HAA :
-  Total :
-  H6
-  KJB :
-  HAA :
-  Total :
-  H7
-  KJB :
-  HAA :
-  Total :
+  ${cargoPerHoldText}
 
-  ${updateBargeText}	`;
+  ${updateBargeText}`;
 
   const handleCopy = async () => {
     try {
