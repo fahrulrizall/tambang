@@ -3,6 +3,8 @@ const UsersRoutes = require("./users");
 const TugBoatRoutes = require("./tugboat");
 const BargingRoutes = require("./barging");
 const TranshipmentRoutes = require("./transhipment");
+const CargoRoutes = require("./cargo");
+const RemarksRoutes = require("./remarks");
 
 module.exports = {
   AuthenticationRoutes,
@@ -10,4 +12,6 @@ module.exports = {
   TugBoatRoutes,
   BargingRoutes,
   TranshipmentRoutes,
+  CargoRoutes,
+  RemarksRoutes,
 };

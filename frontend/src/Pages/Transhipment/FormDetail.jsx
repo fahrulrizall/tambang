@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  PagedSearchBargingDetail,
   CreateTranshipmentDetail,
   UpdateTranshipmentDetail,
   ReadTranshipmentDetail,

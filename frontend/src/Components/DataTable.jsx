@@ -19,6 +19,7 @@ export default function DataTable({
   onAdd,
   usePagination = true,
   callback,
+  title,
 }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(0);
@@ -71,8 +72,8 @@ export default function DataTable({
 
   return (
     <>
-      {isSearch && (
-        <div className="mb-2 row">
+      <div className="mb-2 row">
+        {isSearch && (
           <div className="col-sm-4 col-md-3">
             <input
               className="form-control search-box me-2 mb-2 d-inline-block"
@@ -80,8 +81,13 @@ export default function DataTable({
               onChange={(e) => handleDebouncedChange(e.target.value)}
             />
           </div>
-
-          <div className="col-sm-8 col-md-9 d-flex justify-content-end align-items-center">
+        )}
+        {isAdd && (
+          <div
+            className={`col-sm-8 col-md-${
+              isAdd ? "12" : "9"
+            } d-flex justify-content-end align-items-center`}
+          >
             <button
               className="btn btn-primary"
               onClick={(e) => {
@@ -93,8 +99,8 @@ export default function DataTable({
               Create New
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {isLoading ? (
         <div className="d-flex align-items-center justify-content-center mt-5">

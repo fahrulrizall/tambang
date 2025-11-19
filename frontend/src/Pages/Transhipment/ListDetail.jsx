@@ -19,7 +19,6 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { convertUtcUser } from "../../helpers";
 import moment from "moment";
-import FormRemarks from "./FormRemarks";
 import ListRemarks from "./ListRemarks";
 
 export default function DetailList({
@@ -32,7 +31,6 @@ export default function DetailList({
   const uuid = searchParams.get("uuid");
   const noBarging = searchParams.get("no");
   const [isShowModal, setIsShowModal] = useState(false);
-  const [isShowModalRemarks, setIsShowModalRemarks] = useState(false);
   const [total, setTotal] = useState(0);
   const [data, setData] = useState([]);
   const [updateBarge, setUpdateBarge] = useState([]);

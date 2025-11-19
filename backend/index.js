@@ -9,6 +9,8 @@ const {
   TugBoatRoutes,
   BargingRoutes,
   TranshipmentRoutes,
+  CargoRoutes,
+  RemarksRoutes,
 } = require("./src/routes");
 const { VerifyToken } = require("./src/middleware/index.js");
 
@@ -30,4 +32,6 @@ app.use("/users", VerifyToken, UsersRoutes);
 app.use("/tugboat", VerifyToken, TugBoatRoutes);
 app.use("/barging", VerifyToken, BargingRoutes);
 app.use("/transhipment", VerifyToken, TranshipmentRoutes);
+app.use("/cargo", VerifyToken, CargoRoutes);
+app.use("/remarks", VerifyToken, RemarksRoutes);
 app.listen(process.env.PORT);
