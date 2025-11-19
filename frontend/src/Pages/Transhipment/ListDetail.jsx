@@ -35,6 +35,8 @@ export default function DetailList({
   const noBarging = searchParams.get("no");
   const [isShowModal, setIsShowModal] = useState(false);
   const [total, setTotal] = useState(0);
+  const [totalHours, setTotalHours] = useState(0);
+  const [totalHoursTPH, setTotalHoursTPH] = useState(0);
   const [data, setData] = useState([]);
   const [updateBarge, setUpdateBarge] = useState([]);
   const {
@@ -260,8 +262,22 @@ export default function DetailList({
                 setIsOpen(true);
               }}
               callback={(response) => {
-                setData(response.data.data);
-                setTotal(response.data.totalWeight);
+                const data = response.data;
+                setData(data.data);
+                setTotal(data.totalWeight);
+
+                let totalHours = 0;
+
+                data.data.forEach((item) => {
+                  const start = new Date(item?.commanced);
+                  const end = new Date(item?.completed);
+
+                  const diffMs = end - start;
+                  const diffHours = diffMs / (1000 * 60 * 60);
+                  totalHours += diffHours;
+                });
+
+                setTotalHours(totalHours);
               }}
               usePagination={false}
               activeClassName={(item) => {
@@ -399,21 +415,9 @@ export default function DetailList({
                       <tr>
                         <td>TPH :</td>
                         <td className="d-flex gap-2">
-                          <p className="fs-5">{total || 0}/</p>
-                          <input
-                            type="number"
-                            className="form-control w-50"
-                            value={headerSelected?.tph}
-                            onChange={(e) =>
-                              setSelectedHeader((prev) => ({
-                                ...prev,
-                                tph: e.target.value,
-                              }))
-                            }
-                          />
-                          <p className="fs-5">
-                            ={(total || 0) / Number(headerSelected?.tph || 0)}
-                          </p>
+                          {parseFloat(
+                            total / (totalHours - totalHoursTPH)
+                          ).toFixed(3)}
                         </td>
                       </tr>
                       <tr>
@@ -446,7 +450,10 @@ export default function DetailList({
                   </table>
                 </div>
 
-                <ListRemarks transhipmentUuid={uuid} />
+                <ListRemarks
+                  transhipmentUuid={uuid}
+                  setTotalHours={setTotalHoursTPH}
+                />
                 <CargoBarge data={data} />
                 <CargoHold transhipmentUuid={uuid} />
                 <UpdateBarge data={updateBarge} />

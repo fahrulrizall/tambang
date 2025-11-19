@@ -160,7 +160,7 @@ export default function ListRemarks({ transhipmentUuid }) {
           }
         }}
         callback={(response) => {
-          setLength(response.data.data?.length || 1);
+          setLength(response.data.data?.length);
         }}
       />
       <Form

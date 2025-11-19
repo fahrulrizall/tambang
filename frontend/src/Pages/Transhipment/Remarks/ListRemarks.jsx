@@ -4,8 +4,9 @@ import { convertUtcUser } from "../../../helpers";
 import { DataTable, ModalPopUp } from "../../../Components";
 import FormRemarks from "./FormRemarks";
 import { useApplicationStoreContext } from "../../../Hook/UserHook";
+import { forEach } from "lodash";
 
-export default function ListRemarks({ transhipmentUuid }) {
+export default function ListRemarks({ transhipmentUuid, setTotalHours }) {
   const [selected, setSelected] = useState(null);
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowModalRemarks, setIsShowModalRemarks] = useState(false);
@@ -159,6 +160,21 @@ export default function ListRemarks({ transhipmentUuid }) {
         isAdd={true}
         onAdd={() => {
           setIsShowModalRemarks(true);
+        }}
+        callback={(response) => {
+          const data = response.data;
+
+          let totalHours = 0;
+
+          data.data.forEach((item) => {
+            const start = new Date(item?.start);
+            const end = new Date(item?.end);
+
+            const diffMs = start - end;
+            const diffHours = diffMs / (1000 * 60 * 60);
+            totalHours += diffHours;
+          });
+          setTotalHours((prev) => prev - totalHours);
         }}
         usePagination={false}
         activeClassName={(item) => {
