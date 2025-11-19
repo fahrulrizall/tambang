@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import {
   DataTable,
@@ -10,7 +10,6 @@ import { useSearchParams } from "react-router-dom";
 import {
   PagedSearchTranshipmentDetail,
   DeleteTranshipmentDetail,
-  PagedSearchBargingDetailByNoMV,
   UpdateTranshipment,
 } from "../../API";
 import { useApplicationStoreContext } from "../../Hook/UserHook";
@@ -32,13 +31,12 @@ export default function DetailList({
   const [selected, setSelected] = useState();
   const [isOpen, setIsOpen] = useState(false);
   const uuid = searchParams.get("uuid");
-  const noBarging = searchParams.get("no");
+
   const [isShowModal, setIsShowModal] = useState(false);
   const [total, setTotal] = useState(0);
   const [totalHours, setTotalHours] = useState(0);
   const [totalHoursTPH, setTotalHoursTPH] = useState(0);
   const [data, setData] = useState([]);
-  const [updateBarge, setUpdateBarge] = useState([]);
   const {
     lastDataModificationTimestamp,
     setLastDataModificationTimestamp,
@@ -207,22 +205,6 @@ export default function DetailList({
     );
   };
 
-  useEffect(() => {
-    PagedSearchBargingDetailByNoMV({
-      pageIndex: 0,
-      pageSize: 1000,
-      noBarging,
-    }).then((res) => {
-      const bargeList = new Set(data.map((x) => x.barge.toLowerCase()));
-      const alldata = res.data.data;
-
-      const updated = alldata.filter(
-        (a) => !bargeList.has(a.barge.toLowerCase())
-      );
-      setUpdateBarge(updated);
-    });
-  }, [data]);
-
   return (
     <div className="card">
       <div className="card-body">
@@ -264,7 +246,7 @@ export default function DetailList({
               callback={(response) => {
                 const data = response.data;
                 setData(data.data);
-                setTotal(data.totalWeight);
+                setTotal(data.totalWeight || 0);
 
                 let totalHours = 0;
 
@@ -456,7 +438,7 @@ export default function DetailList({
                 />
                 <CargoBarge data={data} />
                 <CargoHold transhipmentUuid={uuid} />
-                <UpdateBarge data={updateBarge} />
+                <UpdateBarge />
               </div>
             </div>
           </Tab>
