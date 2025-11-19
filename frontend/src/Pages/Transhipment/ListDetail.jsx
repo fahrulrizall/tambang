@@ -20,6 +20,9 @@ import Tabs from "react-bootstrap/Tabs";
 import { convertUtcUser } from "../../helpers";
 import moment from "moment";
 import ListRemarks from "./Remarks/ListRemarks";
+import CargoBarge from "./CargoBarge";
+import UpdateBarge from "./UpdateBarge";
+import CargoHold from "./CargoHold";
 
 export default function DetailList({
   selected: headerSelected,
@@ -444,63 +447,9 @@ export default function DetailList({
                 </div>
 
                 <ListRemarks transhipmentUuid={uuid} />
-
-                <div>
-                  <div className="section-title">Cargo per Barge :</div>
-                  <table className="table table-borderless table-sm">
-                    <tbody>
-                      {data.map((item, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{item.barge}</td>
-                            <td>{item.cargoOnb}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="section-title">Cargo per Hold :</div>
-                <div className="row">
-                  <div className="col-md-4">
-                    <p>
-                      {/* <strong>H1</strong> */}
-                      <br />
-                      {/* KJB : <br />
-                      HAA : <br />
-                      Total :{" "} */}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="section-title">Update Barge :</div>
-                  <table className="table table-bordered table-sm align-middle">
-                    <thead className="table-light">
-                      <tr>
-                        <th>No</th>
-                        <th>Tug Boat</th>
-                        <th>Barge</th>
-                        <th>Cargo</th>
-                        <th>Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {updateBarge.map((item, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{item?.no}</td>
-                            <td>{item?.name}</td>
-                            <td>{item?.barge}</td>
-                            <td>{item?.cargo}</td>
-                            <td>{item?.remarks}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                <CargoBarge data={data} />
+                <CargoHold transhipmentUuid={uuid} />
+                <UpdateBarge data={updateBarge} />
               </div>
             </div>
           </Tab>

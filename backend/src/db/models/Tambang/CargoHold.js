@@ -15,6 +15,9 @@ CargoHold.init(
     transhipmentUuid: {
       type: DataTypes.UUID(),
     },
+    no: {
+      type: DataTypes.INTEGER(),
+    },
     kjb: {
       type: DataTypes.STRING(),
     },
