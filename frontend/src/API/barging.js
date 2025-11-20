@@ -77,6 +77,26 @@ const PagedSearchBargingDetailByNoMV = (data) => {
   );
 };
 
+const PagedSearchBargingDetailByNoMVUnused = (data) => {
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
+  return _Get(
+    `${process.env.REACT_APP_API_URL}/${endpoint}/list/detail/unused/${data.noBarging}/${data.transhipmentUuid}`,
+    {
+      params: {
+        ...data,
+      },
+      ..._options,
+    }
+  );
+};
+
 const CreateBarging = (data) => {
   let accessToken = Cookies.get("accessToken");
   let _options = {
@@ -208,4 +228,5 @@ export {
   ReadBargingDetail,
   PagedSearchBargingGroup,
   PagedSearchBargingDetailByNoMV,
+  PagedSearchBargingDetailByNoMVUnused,
 };

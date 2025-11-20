@@ -1,12 +1,13 @@
 import DataTable from "../../../Components/DataTable";
 import { useApplicationStoreContext } from "../../../Hook/UserHook";
-import { PagedSearchBargingDetailByNoMV } from "../../../API";
+import { PagedSearchBargingDetailByNoMVUnused } from "../../../API";
 import { useSearchParams } from "react-router-dom";
 
 export default function PlantTable({ setUpdateBargeList }) {
   const { lastDataModificationTimestamp } = useApplicationStoreContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const noBarging = searchParams.get("no");
+  const transhipmentUuid = searchParams.get("uuid");
   const tableHeaders = [
     {
       name: "No",
@@ -43,15 +44,20 @@ export default function PlantTable({ setUpdateBargeList }) {
   return (
     <DataTable
       title="Update Barge"
-      api={PagedSearchBargingDetailByNoMV}
+      api={PagedSearchBargingDetailByNoMVUnused}
       tableHeader={tableHeaders}
       tableBody={tableBody}
       isSearch={false}
-      dependencies={[lastDataModificationTimestamp]}
+      dependencies={[
+        lastDataModificationTimestamp,
+        transhipmentUuid,
+        noBarging,
+      ]}
       params={{
         orderByFieldName: "no",
         sortOrder: "asc",
         noBarging,
+        transhipmentUuid,
       }}
       isAdd={false}
       usePagination={false}

@@ -470,6 +470,37 @@ const readBargingDetail = async (req, res) => {
   }
 };
 
+const readBargingUnUsed = async (req, res) => {
+  const { noBarging, transhipmentUuid } = req.params;
+
+  try {
+    const results = await sequelizeConnection.query(
+      `
+      SELECT b.*
+      FROM vw_bargingdetail b
+      LEFT JOIN vw_transhipmentdetail t
+          ON t.bargingdetailuuid = b.uuid
+          AND t.transhipmentuuid = :transhipmentuuid
+      WHERE b.nomv = :nomv
+        AND t.bargingdetailuuid IS NULL
+      `,
+      {
+        replacements: {
+          nomv: noBarging,
+          transhipmentuuid: transhipmentUuid,
+        },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    res.json({
+      data: results,
+    });
+  } catch (error) {
+    ApiError(res, error);
+  }
+};
+
 module.exports = {
   pagedSearcBarging,
   pagedSearcBargingDetail,
@@ -483,4 +514,5 @@ module.exports = {
   readBargingDetail,
   groupedBarging,
   pagedSearcBargingDetailByNo,
+  readBargingUnUsed,
 };

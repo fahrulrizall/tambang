@@ -30,6 +30,12 @@ BargingRoutes.get(
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
   BargingController.pagedSearcBargingDetailByNo
 );
+BargingRoutes.get(
+  "/list/detail/unused/:noBarging/:transhipmentUuid",
+  CheckUserRole(allRole),
+  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
+  BargingController.readBargingUnUsed
+);
 BargingRoutes.post(
   "/",
   CheckUserRole(allRole),

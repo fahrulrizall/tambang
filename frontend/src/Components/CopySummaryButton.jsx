@@ -47,7 +47,7 @@ const CopySummaryButton = ({
     "Update Barge:\n" +
     "No\tTug Boat\tBarge\tCargo\tRemarks\n" +
     updateBargeList
-      .map(
+      ?.map(
         (item) =>
           `${item.no}\t${item.name}\t${item.barge}\t${item.cargo}\t${
             item.remarks || ""
@@ -77,8 +77,8 @@ const CopySummaryButton = ({
   Previous Cargo :	${header?.prevCargo}
   Cargo Onboard :	${total}
   Balance Cargo :	${parseFloat(header?.stowagePlan - total).toFixed(3)}
-  Loading Rate DTD :	${header.loadingRateDTD}
-  Loading Rate PTD :	 ${header.loadingRatePTD}
+  Loading Rate DTD :	${header?.loadingRateDTD}
+  Loading Rate PTD :	 ${header?.loadingRatePTD}
   TPH :	${parseFloat(total / (totalHours - totalHoursRemarks)).toFixed(3)}
   Commanced Loading :	${moment(data[0]?.commanced).format("DD-MM-YYYY HH:mm")}
   Est Commpleted Loading :	${moment(header?.completedLoading).format(
