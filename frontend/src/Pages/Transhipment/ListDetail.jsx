@@ -351,7 +351,7 @@ export default function DetailList({
                           <input
                             type="text"
                             className="form-control w-50"
-                            value={headerSelected?.prevCargo}
+                            value={headerSelected?.prevCargo || ""}
                             onChange={(e) =>
                               setSelectedHeader((prev) => ({
                                 ...prev,
@@ -379,7 +379,7 @@ export default function DetailList({
                           <input
                             type="number"
                             className="form-control w-50"
-                            value={headerSelected?.loadingRateDTD}
+                            value={headerSelected?.loadingRateDTD || ""}
                             onChange={(e) =>
                               setSelectedHeader((prev) => ({
                                 ...prev,
@@ -395,7 +395,7 @@ export default function DetailList({
                           <input
                             type="number"
                             className="form-control w-50"
-                            value={headerSelected?.loadingRatePTD}
+                            value={headerSelected?.loadingRatePTD || ""}
                             onChange={(e) =>
                               setSelectedHeader((prev) => ({
                                 ...prev,
@@ -416,9 +416,10 @@ export default function DetailList({
                       <tr>
                         <td>Commenced Loading :</td>
                         <td>
-                          {moment(data[0]?.commanced).format(
-                            "DD-MM-YYYY HH:mm"
-                          )}
+                          {data[0]?.commanced &&
+                            moment(data[0]?.commanced).format(
+                              "DD-MM-YYYY HH:mm"
+                            )}
                         </td>
                       </tr>
                       <tr>
@@ -427,9 +428,13 @@ export default function DetailList({
                           <input
                             type="datetime-local"
                             className="form-control w-50"
-                            value={moment(
+                            value={
                               headerSelected?.completedLoading
-                            ).format("yyyy-MM-DD HH:mm")}
+                                ? moment(
+                                    headerSelected?.completedLoading
+                                  ).format("yyyy-MM-DD HH:mm")
+                                : ""
+                            }
                             onChange={(e) =>
                               setSelectedHeader((prev) => ({
                                 ...prev,
